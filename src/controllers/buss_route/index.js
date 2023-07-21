@@ -1,12 +1,11 @@
 const knex = require("../../database/index");
 
 module.exports = {
-     async searchRoute(req, res) {
+    async searchBusGeral(req, res) {
         try {
             const result = await knex("bus_route");
             res.status(201).json(result);
         } catch (error) {
-            console.log('error: ', error);
             return res.status(400).json({ error: error.message });
         }
     },
