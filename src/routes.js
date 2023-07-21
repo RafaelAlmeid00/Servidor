@@ -51,6 +51,13 @@ routes.post('/card', controllersRequestCard.CadReqCard);
 routes.get('/card', controllersRequestCard.searchReqCard);
 routes.post('/card/search', controllersRequestCard.searchReqCPF);
 
+routes.get('/routes', controllerBusRoute.searchRoute)
+routes.post('/routes', controllerBusRoute.cadRoutes);
+routes.put('/routes', controllerBusRoute.attRoutes);
+routes.delete('/routes', controllerBusRoute.excldRoutes);
+routes.post('/routes/search', controllerBusRoute.consultRoute);
+
+
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
@@ -58,11 +65,7 @@ routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
 
-routes.post('/routes', controllerBusRoute.cadRoutes);
-routes.put('/routes', controllerBusRoute.attRoutes);
-routes.delete('/routes', controllerBusRoute.excldRoutes);
-routes.post('/routes/search', controllerBusRoute.consultRoute);
-
+routes.get('/buss', controllerBuss.searchBuss)
 routes.post('/buss', controllerBuss.cadBuss);
 routes.put('/buss', controllerBuss.attBuss);
 

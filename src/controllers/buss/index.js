@@ -1,6 +1,16 @@
 const knex = require("../../database/index");
 
 module.exports = {
+     async searchBuss(req, res) {
+        try {
+            const result = await knex("bus");
+            res.status(201).json(result);
+        } catch (error) {
+            console.log('error: ', error);
+            return res.status(400).json({ error: error.message });
+        }
+    },
+    
     async cadBuss(req, res) {
         try {
             const { bus_id: busid } = req.body;

@@ -142,7 +142,7 @@ async UserLogin(req, res) {
             user_endcidade: takeCPF.user_endcidade,
             user_tipo: takeCPF.user_tipo
 
-          }, process.env.JWT_SECRET, { expiresIn: '1000000' });
+          }, process.env.JWT_SECRET, { expiresIn: '7d' });
           console.log('this is req.headers: ', req.headers);
 
         res.cookie('token', token, {secure: true})  
@@ -184,7 +184,7 @@ async UserLogin(req, res) {
               user_endcidade: takeCPF.user_endcidade,
               user_tipo: takeCPF.user_tipo
 
-            }, process.env.JWT_SECRET, { expiresIn: '1000000' });
+            }, process.env.JWT_SECRET, { expiresIn: '7d' });
             console.log('this is req.headers: ', req.headers);
 
             res.cookie('token', token, { secure: true })
