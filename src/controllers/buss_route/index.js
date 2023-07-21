@@ -30,8 +30,8 @@ module.exports = {
         try {
             const { route_num: num } = req.body;
             const { route_nome: nome } = req.body
-            if (num != undefined) {
-                const consultName = await knex("bus_route").where('route_num', '=', num);
+            if (num) {
+                const consultName = await knex("bus_route").where('route_num', '=', num)
                 const consultRoutes = await knex("routes").where('bus_route_rote_id', '=', consultName[0].rote_id);
                 if (consultName[0].rote_id == '' || consultRoutes == '') {
                     return res.status(404).send("Route not found");
