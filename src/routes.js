@@ -15,6 +15,8 @@ const controllerTurn = require('./controllers/turn_bus/index');
 const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
 const othersRec_Pass = require('./others/rec_pass')
+const controllerCardEnvio = require('./controllers/card/index')
+const controllerValidation = require('./controllers/validation_card/index')
 
 const middleware = require('./controllers/Middleware');
 const RecMid = require('./others/rec_mid');
@@ -47,22 +49,23 @@ routes.get('/listcpf', controllerListCPF.searchListCpf);
 routes.post('/listcpf/search', controllerListCPF.searchCpf);
 
 
-routes.post('/card', controllersRequestCard.CadReqCard);
-routes.get('/card', controllersRequestCard.searchReqCard);
-routes.post('/card/search', controllersRequestCard.searchReqCPF);
-
-
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
-routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 
+routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
 
 routes.get('/buss', controllerBuss.searchBuss)
 routes.post('/buss', controllerBuss.cadBuss);
 routes.put('/buss', controllerBuss.attBuss);
 
+routes.post('/card', controllersRequestCard.CadReqCard);
+routes.get('/card', controllersRequestCard.searchReqCard);
+routes.post('/card/search', controllersRequestCard.searchReqCPF);
+routes.post('/card/envio', controllerCardEnvio.cadCard);
+routes.post('/card/enviados', controllerCardEnvio.searchCard);
+routes.delete('/card/delete', controllerCardEnvio.exclCard);
 
 routes.post('/routes/all', controllerBusRoute.searchBusGeral);
 routes.post('/routes', controllerBusRoute.cadRoutes);
@@ -88,4 +91,10 @@ routes.get('/sac', controllersSac.Search);
 
 routes.post('/message', controllerMessage.CadMessage);
 routes.get('/message', controllerMessage.SearchMessage)
+
+routes.post('/validation', controllerValidation.cadVal)
+routes.post('/validation/search', controllerValidation.searchVal);
+routes.post('/validation', controllerValidation.searchValAll);
+routes.delete('/validation', controllerValidation.deleteVal);
+
 module.exports = routes;
