@@ -32,18 +32,25 @@ module.exports = {
             return res.status(400).json({ error: error.message });
         }
     },
+    
+    async searchBussinesEmail(req, res) {
+  const { buss_contato: email } = req.body;
+  
+  try {
+    const takeEmail = await knex("bussines").where("buss_contato", "=", email).first();
+
+    if (!takeEmail) {
+      return res.status(404).json({ error: "E-mail não encontrado." });
+    }
+
+    res.status(200).send(takeEmail);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+},
 
     async createBussines(req, res) {
-        /*`buss_CNPJ` VARCHAR(14) NOT NULL,
-  `buss_nome` VARCHAR(45) NOT NULL,
-  `buss_contato` VARCHAR(45) NOT NULL,
-  `buss_endCEP` VARCHAR(9) NOT NULL,
-  `buss_endUF` VARCHAR(2) NOT NULL,
-  `buss_endrua` VARCHAR(45) NOT NULL,
-  `buss_endnum` VARCHAR(45) NOT NULL,
-  `buss_endcomplemento` VARCHAR(45) NULL,
-  `buss_endcidade` VARCHAR(45) NOT NULL,
-  `buss_tipo` ENUM("school", "bussines", "bussinesbus") NOT NULL*/
+
         try {
             const { buss_CNPJ: cnpj } = req.body;
             const { buss_nome: name } = req.body;
@@ -56,17 +63,6 @@ module.exports = {
             const { buss_endcidade: city } = req.body;
             const { buss_tipo: type } = req.body
 
-            /*buss_CNPJ: cnpj,
-      buss_nome: name,
-      buss_contato: contato,
-      buss_endCEP: cep,
-      buss_endUF: UF,
-      buss_endbairro: district,
-      buss_endrua: street,
-      buss_endnum: num,
-      buss_endcomplemento: comp,
-      buss_endcidade: city,
-      buss_tipo: tipo,*/
         await knex("bussines").insert({
             buss_CNPJ: cnpj,
             buss_nome: name,
