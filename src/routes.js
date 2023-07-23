@@ -40,6 +40,7 @@ routes.post('/user/login/Rec', othersRec_Pass.compareEmail);
 
 routes.post('/bussines', controllersBussines.createBussines);
 routes.get('/bussines', controllersBussines.searchBussines);
+routes.post('/bussines/email', controllersBussines.searchBussinesEmail);
 
 routes.post('/user/update', controllersUser.UpdateUser);
 
