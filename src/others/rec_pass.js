@@ -50,10 +50,11 @@ module.exports = {
             var search = recipient.search('@gmail.com') - 2;
             const censurado = recipient.slice(0, 2) + ('*'.repeat(search)) + '@gmail.com';
             console.log('this is censurado: ', censurado);
-
+            
             const rec = await JWT.sign({
               carga: carga,
-              email: censurado
+              email: censurado,
+              verified: false
             }, process.env.JWT_SECRET, { expiresIn: '1000000' })
 
             res.status(201).json({RecToken: rec});
@@ -65,20 +66,27 @@ module.exports = {
     async compareEmail(req, res){
         try{
             const {code: code} = req.body;
+            var verified
             console.log('this is user code: ', code);
             const compare = await mid(req, res);
             console.log('this is compare carga: ', compare.carga);
-            encrypt.compare(code, compare.carga, (err, comp) =>{
+            encrypt.compare(code, compare.carga, async (err, comp) =>{
               if (err || comp == false) {
                 console.log(err);
                 console.log('errado');
+                verified = false
                 return res.status(401).send(err)
-              }
-              return console.log('this is veredito: ', comp);
+              }else
+               console.log('this is veredito: ', comp);
+               verified = true
+               const rec = await JWT.sign({
+                verified: verified
+              }, process.env.JWT_SECRET, { expiresIn: '1000000' })
+
+              console.log('take me to church: ', compare);
+              res.status(201).json({RecToken: rec});
             });
-            
-            console.log('take me to church: ', compare);
-            res.status(201).send('yo')
+           
         }catch(erro){console.log(erro); res.send(erro)}
     }
 }
