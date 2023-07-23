@@ -25,13 +25,11 @@ const routes = express.Router();
 
 routes.use(cookie());
 
-
+routes.post('/user', controllersUser.root);
 routes.post('/user', controllersUser.createUser);
-routes.get('/user/login', controllersUser.UserLogin);
 routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
-routes.post('/user/token', controllersUser.UpdateToken);
 
 //recuperação de conta:
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
@@ -42,8 +40,6 @@ routes.post('/bussines', controllersBussines.createBussines);
 routes.get('/bussines', controllersBussines.searchBussines);
 routes.post('/bussines/email', controllersBussines.searchBussinesEmail);
 
-routes.post('/user/update', controllersUser.UpdateUser);
-
 routes.post('/listcpf', controllerListCPF.createListCpf);
 routes.delete('/listcpf/:CNPJ', controllerListCPF.listcpfDelete);
 routes.get('/listcpf', controllerListCPF.searchListCpf);
@@ -53,6 +49,8 @@ routes.post('/listcpf/search', controllerListCPF.searchCpf);
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
+routes.post('/user/update', controllersUser.UpdateUser);
+routes.post('/user/token', controllersUser.UpdateToken);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
@@ -67,6 +65,7 @@ routes.post('/card/search', controllersRequestCard.searchReqCPF);
 routes.post('/card/envio', controllerCardEnvio.cadCard);
 routes.post('/card/enviados', controllerCardEnvio.searchCard);
 routes.delete('/card/delete', controllerCardEnvio.exclCard);
+routes.post('/card/cancelados', controllerCardEnvio.searchCardCancel);
 
 routes.post('/routes/all', controllerBusRoute.searchBusGeral);
 routes.post('/routes', controllerBusRoute.cadRoutes);

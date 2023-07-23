@@ -10,6 +10,29 @@ module.exports = {
         }
     },
 
+    async searchCardCancel(req, res) {
+  const { user_CPF: list_CPF } = req.body;
+
+  try {
+    // Passo 1: Pesquisar todas as tuplas com o user_CPF fornecido na tabela 'request_card'.
+    const takeCPF = await knex("request_card").where("user_user_CPF", list_CPF);
+
+    // Passo 2: Extrair todos os valores de req_id das tuplas retornadas.
+    const reqIds = takeCPF.map((item) => item.req_id);
+
+    // Passo 3: Pesquisar na tabela 'card' usando os reqIds obtidos e filtrar por 'card_status' = "cancelado".
+    const canceledCards = await knex("card").whereIn("request_card_req_id", reqIds).andWhere("card_status", "cancelado");
+
+    // Passo 4: Registrar a lista de cartões cancelados no servidor.
+    console.log("Cartões Cancelados:", canceledCards);
+
+    // Passo 5: Enviar a lista de cartões cancelados para o front-end.
+    res.status(200).send(canceledCards);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+},
+
 async cadCard(req, res) {
   const { card_saldo: saldo } = req.body;
   const { card_status: status } = req.body;
@@ -32,7 +55,16 @@ async cadCard(req, res) {
         }
         const currentDate = new Date();
         const date = formatDateToYYYYMMDD(currentDate);
-        const config = {card_validade: date, card_saldo: saldo, card_tipo: type, card_status: status, request_card_req_id: id}
+
+    let idcard = ''
+
+  for (let i = 0; i < 16; i++) {
+    const randomDigit = Math.floor(Math.random() * 10); // Gera um dígito aleatório entre 0 e 9
+    idcard += randomDigit;
+  }
+  console.log(idcard);
+
+        const config = {card_id: idcard, card_validade: date, card_saldo: saldo, card_tipo: type, card_status: status, request_card_req_id: id}
         console.log(config);
     const cardcadastrado = await knex("card").insert(config);
     res.status(200).send('Cadastrado Cartão');

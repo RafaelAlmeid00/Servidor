@@ -206,12 +206,12 @@ async UserLogin(req, res) {
 async DeleteUser (req, res) {
   try {
 
-      const { user_email: data } = req.body;
+      const { user_CPF: data } = req.body;
 
       console.log('this is cookies 2: ', data);
       console.log('someone here??');
             
-      const result = await knex("user").where('user_email', '=', data).del();
+      const result = await knex("user").where('user_CPF', '=', data).del();
       res.cookie('token', '', { expires: new Date(0), httpOnly: true, secure: true });
 
       res.status(201).json(result);
