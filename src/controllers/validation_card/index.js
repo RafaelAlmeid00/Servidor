@@ -1,5 +1,6 @@
 const knex = require('../../database/index')
 
+
 module.exports = {
 
     async searchValAll(req, res) {

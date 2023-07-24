@@ -1,13 +1,21 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 const knex = require("../../database/index");
 const JWT = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const localData = require('../Middleware');
-const cookie = require('cookie-parser');
-
+const multer = require('multer');
+const uniqid = require('uniqid');
+const path = require('path');
+const storage = multer.diskStorage({
+  destination: './user/fundoperfil',
+  filename: function (req, file, cb) {
+    const uniqueFilename = uniqid() + path.extname(file.originalname);
+    cb(null, uniqueFilename);
+  }
+});
+const upload = multer({ storage });
+const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
+
 
 module.exports = {
     async root(req, res) {
@@ -140,8 +148,10 @@ async UserLogin(req, res) {
             user_endnum: takeCPF.user_endnum,
             user_endcomplemento: takeCPF.user_endcomplemento,
             user_endcidade: takeCPF.user_endcidade,
-            user_tipo: takeCPF.user_tipo
-
+            user_tipo: takeCPF.user_tipo,
+            user_status: takeCPF.user_status,
+            user_credit: takeCPF.user_credit,
+            user_Background: takeCPF.user_Background
           }, process.env.JWT_SECRET, { expiresIn: '7d' });
           console.log('this is req.headers: ', req.headers);
 
@@ -182,7 +192,10 @@ async UserLogin(req, res) {
               user_endnum: takeCPF.user_endnum,
               user_endcomplemento: takeCPF.user_endcomplemento,
               user_endcidade: takeCPF.user_endcidade,
-              user_tipo: takeCPF.user_tipo
+              user_tipo: takeCPF.user_tipo,
+              user_status: takeCPF.user_status,
+            user_credit: takeCPF.user_credit,
+            user_Background: takeCPF.user_Background
 
             }, process.env.JWT_SECRET, { expiresIn: '7d' });
             console.log('this is req.headers: ', req.headers);
@@ -260,41 +273,76 @@ async UpdateUser(req, res) {
     console.log(error);
     res.status(500).send('Erro interno do servidor.');
   }
+},
+async uploadImage(req, res) {
+  try {
+    console.log('até aqui foi');
+
+    // Verificar se o cabeçalho 'Authorization' está presente
+    const token = req.headers['authorization'];
+const cpf = req.headers['user_cpf'];
+console.log(req.headers);
+    console.log(cpf);
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' });
+    }
+
+    upload.single('selectedImage')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        console.log(err);
+        return res.status(400).json({ error: 'Error uploading image.' });
+      } else if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Unexpected error.' });
+      }
+
+      if (!req.file) {
+        console.log({ error: 'No image file provided.' });
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+
+      // Se chegou até aqui, o upload foi bem-sucedido.
+  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+      console.log('foi');
+      try {
+
+      await knex('user').where('user_CPF', '=', cpf).update({
+          user_Background: req.file.filename, // Nome do arquivo gerado pelo multer
+        });
+
+        return res.json({ imageUrl: req.file.filename });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error uploading image.' });
+  }
+},
+
+async returnFundo(req, res) {
+  const { filename } = req.body;
+  console.log(filename);
+  const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'fundoperfil', filename);
+  console.log(imagePath);
+  
+  // Ler a imagem como um buffer
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      console.error('Erro ao ler a imagem:', err);
+      return res.status(500).json({ error: 'Erro ao ler a imagem.' });
+    }
+
+    // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
+    res.setHeader('Content-Type', 'image/jpeg');
+    
+    // Enviar o buffer da imagem na resposta
+    res.end(data);
+  });
 }
 
-     //recuperação por nome protótipo
-    /*async UserNameLogin(req, res){
-        try {
-            const { user_nome: nome } = req.body;
-            const { user_endUF: UF } = req.body;
-            const { user_senha: password } = req.body;
-            
-            const takeNomerec = await knex("user").where("user_nome", "=", nome);
-            let index = 0;
-            for (index <= takeNomerec.length; index++;) {
 
-                bcrypt.compare(password, takeNomerec[index].user_senha, function (err, comp) {
-                    if (err) {
-                        console.log(err);
-                    }else{
-                        console.log('default', comp);
-                        switch (comp) {
-                            case true:
-                                console.log(index);
-                                const token = JWT.sign({
-                                    
-                                })
-                                break;
-                        
-                            default:
-                                break;
-                        }
-                    }
-                })
-                
-            }
-        } catch (error) {
-            
-        }
-    } */
 };

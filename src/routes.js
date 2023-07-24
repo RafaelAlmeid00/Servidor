@@ -1,6 +1,7 @@
 
 const express = require('express');
 const cookie = require('cookie-parser');
+const cors = require('cors'); // Importe o cors
 
 //controllers
 const controllersUser = require('./controllers/user/index');
@@ -24,12 +25,14 @@ const RecMid = require('./others/rec_mid');
 const routes = express.Router();
 
 routes.use(cookie());
+routes.use(cors());
 
 routes.post('/user', controllersUser.root);
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
+routes.post('/user/returnfundo', controllersUser.returnFundo);
 
 //recuperação de conta:
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
@@ -51,6 +54,7 @@ routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
 routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
+routes.post('/user/fundoupload', controllersUser.uploadImage);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
