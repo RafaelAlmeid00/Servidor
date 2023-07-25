@@ -33,6 +33,7 @@ routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
 routes.post('/user/returnfundo', controllersUser.returnFundo);
+routes.post('/user/returnperfil', controllersUser.returnPerfil);
 
 //recuperação de conta:
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
@@ -55,6 +56,7 @@ routes.post('/user/delete', controllersUser.DeleteUser);
 routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
+routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);

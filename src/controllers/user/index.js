@@ -12,6 +12,19 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
+
+const storage2 = multer.diskStorage({
+  destination: './user/perfil',
+  filename: function (req, file, cb) {
+    const uniqueFilename = uniqid() + path.extname(file.originalname);
+    cb(null, uniqueFilename);
+  }
+});
+const upload2 = multer({ storage: storage2 });
+
+
+console.log(storage2, upload2);
+
 const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -295,19 +308,77 @@ console.log(req.headers);
         console.log(err);
         return res.status(500).json({ error: 'Unexpected error.' });
       }
+        console.log(req.file);
 
       if (!req.file) {
         console.log({ error: 'No image file provided.' });
         return res.status(400).json({ error: 'No image file provided.' });
       }
+        console.log(req.file);
 
       // Se chegou até aqui, o upload foi bem-sucedido.
   console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
       console.log('foi');
       try {
+        console.log(req.file);
+
+        console.log(req.file.filename);
 
       await knex('user').where('user_CPF', '=', cpf).update({
           user_Background: req.file.filename, // Nome do arquivo gerado pelo multer
+        });
+
+        return res.json({ imageUrl: req.file.filename });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error uploading image.' });
+  }
+},
+
+async uploadImagePerfil(req, res) {
+  try {
+    console.log('até aqui foi');
+
+    // Verificar se o cabeçalho 'Authorization' está presente
+    const token = req.headers['authorization'];
+const cpf = req.headers['user_cpf'];
+console.log(req.headers);
+    console.log(cpf);
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' });
+    }
+
+    upload2.single('selectedImage')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        console.log(err);
+        return res.status(400).json({ error: 'Error uploading image.' });
+      } else if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Unexpected error.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      if (!req.file) {
+        console.log({ error: 'No image file provided.' });
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      // Se chegou até aqui, o upload foi bem-sucedido.
+  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+      console.log('foi');
+      try {
+        console.log(req.file.filename);
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      await knex('user').where('user_CPF', '=', cpf).update({
+          user_FotoPerfil: req.file.filename, // Nome do arquivo gerado pelo multer
         });
 
         return res.json({ imageUrl: req.file.filename });
@@ -327,6 +398,32 @@ async returnFundo(req, res) {
   const { filename } = req.body;
   console.log(filename);
   const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'fundoperfil', filename);
+  console.log(imagePath);
+  
+  // Ler a imagem como um buffer
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      console.error('Erro ao ler a imagem:', err);
+      return res.status(500).json({ error: 'Erro ao ler a imagem.' });
+    }
+
+    // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
+    res.setHeader('Content-Type', 'image/jpeg');
+    
+    // Enviar o buffer da imagem na resposta
+    res.end(data);
+  });
+},
+
+async returnPerfil(req, res) {
+  const { filename } = req.body;
+  console.log(filename);
+
+   if (!filename || typeof filename !== 'string') {
+    return res.status(400).json({ error: 'O campo "filename" é inválido ou está faltando.' });
+  }
+
+  const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'perfil', filename);
   console.log(imagePath);
   
   // Ler a imagem como um buffer
