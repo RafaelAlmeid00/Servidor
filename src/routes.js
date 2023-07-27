@@ -34,6 +34,7 @@ routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
 routes.post('/user/returnfundo', controllersUser.returnFundo);
 routes.post('/user/returnperfil', controllersUser.returnPerfil);
+routes.post('/user/validatetoken', controllersUser.validateToken);
 
 //recuperação de conta:
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
@@ -57,7 +58,7 @@ routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
-routes.post('/user/updateemail', controllersUser.UpdateEmail);
+routes.post('/user/updateemail', controllersUser.sendEmail);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);

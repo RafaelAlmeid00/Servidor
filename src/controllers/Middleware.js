@@ -12,7 +12,7 @@ module.exports = {
     
     if (token || authheader) {
       try {
-        jwt.verify(token, test, (err, decoded) => {
+        jwt.verify(token ? token : authheader, test, (err, decoded) => {
           console.log('this is decoded and err: ', decoded, err);
           if (err) {
             return res.status(401).json({ message: 'Token inválido' });

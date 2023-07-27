@@ -5,7 +5,8 @@ const multer = require('multer');
 const uniqid = require('uniqid');
 const path = require('path');
 const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
+const uuid = require('uuid');
+const moment = require('moment');
 const storage = multer.diskStorage({
   destination: './user/fundoperfil',
   filename: function (req, file, cb) {
@@ -24,6 +25,10 @@ const storage2 = multer.diskStorage({
 });
 const upload2 = multer({ storage: storage2 });
 
+function generateToken() {
+  return uuid.v4();
+}
+let tokens = new Map();
 
 console.log(storage2, upload2);
 
@@ -274,9 +279,14 @@ async UpdateUser(req, res) {
     for (const param in updates) {
       if (paramToField.hasOwnProperty(param)) {
         if (param === 'senha') {
+          console.log(updates);
+          console.log(param);
           // Caso o campo seja "senha", faça o hash da senha antes de atualizá-la no banco de dados
           const hashedPassword = await bcrypt.hash(updates[param], 10);
+          console.log(hashedPassword);
           updateFields[paramToField[param]] = hashedPassword;
+          console.log(updateFields);
+          console.log(updateFields[paramToField[param]]);
           isSenhaUpdated = true;
         } else {
           updateFields[paramToField[param]] = updates[param];
@@ -459,8 +469,12 @@ async returnPerfil(req, res) {
   });
 },
 
-async UpdateEmail(req, res) {
+async sendEmail(req, res) {
   const { user_email: data } = req.body;
+  let { type: type } = req.body
+  const { user_CPF: cpf } = req.body;
+  const { user_nome: nome } = req.body;
+  let token = ''
 
   try {
    const transporter = nodemailer.createTransport({
@@ -475,13 +489,122 @@ async UpdateEmail(req, res) {
       }
     });
 
-    const mailOptions = {
-      from: process.env.email,
-      to: data,
-      subject: 'E-mail enviado usando Node!',
-      text: 'Bem fácil, não? ;)'
-    };
+    function formatarCPF(cpf) {
+      const cpfSemDigitos = cpf.slice(0, -3);
+      return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+    }
 
+    let mailOptions = {}
+
+    if (type = "email") {
+      token = generateToken();
+      const timestamp = moment().unix();
+      tokens.set(token, timestamp);
+    }
+
+    const emailBody = `
+   <!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Estilos para o card */
+    .card {
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      width: 70vw;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center; /* Adicionamos alinhamento central para o conteúdo dentro do card */
+    }
+
+    .card p {
+      margin-top: 5px;
+    }
+
+    /* Estilos para o texto dentro do card */
+    .card-text {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .card-text h1 {
+      color: #30e09a;
+    }
+
+    /* Estilos para o banner */
+    .banner {
+      background-color: rgba(48, 224, 154, 0.2); /* Cor de fundo com transparência */
+      box-shadow: 0 8px 16px rgba(48, 224, 154, 0.1); /* Sombras */
+      border-radius: 20px; /* Borda arredondada */
+      padding: 10px; /* Espaçamento interno */
+      margin-bottom: 20px; /* Espaçamento inferior para separar do parágrafo abaixo */
+    }
+
+    /* Estilos para o botão */
+    .button {
+      display: block; /* Alteramos de flex para block para que o botão não ocupe toda a largura do card */
+      margin: 0 auto; /* Adicionamos margens automáticas para centralizar o botão horizontalmente */
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white; /* Alteramos a cor do texto para branco */
+      background-color: #1976d2;
+      border: none;
+      border-radius: 5px;
+      transition: border 0.3s;
+      margin-top: 50px;
+      width: 200px;
+    }
+
+    /* Estilos para o hover do botão */
+    .button:hover {
+      border: 2px solid #30e09a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-text">
+      <div class="banner"> <!-- Novo elemento para o banner -->
+        <h1>EasyPass</h1>
+      </div>
+    </div>
+    <p>Olá, ${nome}!</p>
+    <p>Aqui está o seu link para alteração de email da sua conta EasyPass: CPF - ${formatarCPF(cpf)}</p>
+    <a class="button" href="http://localhost:5173/Sistema/AlterarEmail?token=${token}">Clique aqui</a>
+  </div>
+</body>
+</html>
+  `;
+
+    switch (type) {
+      case "email":
+
+        mailOptions = {
+          from: process.env.email,
+          to: data,
+          subject: 'Alteração de email: EasyPass',
+          html: emailBody
+        };
+        console.log(mailOptions);
+
+        break;
+      case "senha":
+
+        mailOptions = {
+          from: process.env.email,
+          to: data,
+          subject: 'E-mail enviado usando Node!',
+          text: 'Bem fácil, não? ;)'
+        };
+        console.log(mailOptions);
+        break;
+
+    }
+
+    console.log(mailOptions);
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.error('Erro no envio do Email:', error);
@@ -496,6 +619,31 @@ async UpdateEmail(req, res) {
     console.error('Erro na requisição de envio do Email:', error);
     res.status(400).send('Erro na requisição de envio do Email.');
   }
-}
+},
+
+    async validateToken(req, res) {
+      const { token } = req.body;
+
+      if (tokens.has(token)) {
+        const timestamp = tokens.get(token);
+
+        const currentTime = moment().unix();
+        const timeDifference = currentTime - timestamp;
+
+        const expirationTime = 15 * 60;
+
+        if (timeDifference <= expirationTime) {
+
+          res.status(200).json({ valid: true });
+        } else {
+
+          tokens.delete(token); 
+          res.status(200).json({ valid: false });
+        }
+      } else {
+
+        res.status(200).json({ valid: false });
+      }
+    }
 
 };
