@@ -1,20 +1,23 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+dotenv.config();
 
 module.exports = {
   async mid(req, res, next) {
-    dotenv.config();
+    const {token: token} = req.body
+    const authheader = req.headers['authorization']
     console.log('Middleware called');
+    console.log(token, authheader);
     const test = process.env.JWT_SECRET;
-    const token = req.body.token ? req.body.token : req.headers['authorization']; // Verifica no body ou no cabeçalho 'Authorization'
     
-    if (token) {
+    if (token || authheader) {
       try {
         jwt.verify(token, test, (err, decoded) => {
           console.log('this is decoded and err: ', decoded, err);
           if (err) {
             return res.status(401).json({ message: 'Token inválido' });
           }
+          console.log('Passou pelo mid');
           return next();
         });
       } catch (error) {

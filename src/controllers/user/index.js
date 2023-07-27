@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const uniqid = require('uniqid');
 const path = require('path');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 const storage = multer.diskStorage({
   destination: './user/fundoperfil',
   filename: function (req, file, cb) {
@@ -265,11 +267,20 @@ async UpdateUser(req, res) {
       cidade: 'user_endcidade',
     };
 
-    const updateFields = {};
+     const updateFields = {};
+    let isSenhaUpdated = false; // Variável para indicar se o campo "senha" foi atualizado
+
     // Verifica cada campo fornecido no objeto "updates" e mapeia para o campo correspondente no banco de dados
     for (const param in updates) {
       if (paramToField.hasOwnProperty(param)) {
-        updateFields[paramToField[param]] = updates[param];
+        if (param === 'senha') {
+          // Caso o campo seja "senha", faça o hash da senha antes de atualizá-la no banco de dados
+          const hashedPassword = await bcrypt.hash(updates[param], 10);
+          updateFields[paramToField[param]] = hashedPassword;
+          isSenhaUpdated = true;
+        } else {
+          updateFields[paramToField[param]] = updates[param];
+        }
       }
     }
             console.log(updates);
@@ -282,11 +293,18 @@ async UpdateUser(req, res) {
     } else {
       res.status(400).send('Nenhum campo válido para atualização fornecido.');
     }
+
+     if (isSenhaUpdated) {
+        res.status(200).send('Senha atualizada com sucesso.');
+      } else {
+      res.status(400).send('Nenhum campo válido para atualização fornecido.');
+      }
   } catch (error) {
     console.log(error);
     res.status(500).send('Erro interno do servidor.');
   }
 },
+
 async uploadImage(req, res) {
   try {
     console.log('até aqui foi');
@@ -439,7 +457,45 @@ async returnPerfil(req, res) {
     // Enviar o buffer da imagem na resposta
     res.end(data);
   });
-}
+},
 
+async UpdateEmail(req, res) {
+  const { user_email: data } = req.body;
+
+  try {
+   const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.email,
+        pass: process.env.senhaemail,
+        clientId: process.env.idclient,
+        clientSecret: process.env.secretkey,
+        refreshToken: process.env.refreshtoken
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.email,
+      to: data,
+      subject: 'E-mail enviado usando Node!',
+      text: 'Bem fácil, não? ;)'
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.error('Erro no envio do Email:', error);
+        res.status(400).send('Erro no envio do Email.');
+      } else {
+        console.log(info);
+        console.log('Email enviado com sucesso para:', data);
+        res.status(200).send('Email enviado com sucesso ao: ' + data);
+      }
+    });
+  } catch (error) {
+    console.error('Erro na requisição de envio do Email:', error);
+    res.status(400).send('Erro na requisição de envio do Email.');
+  }
+}
 
 };

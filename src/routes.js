@@ -57,6 +57,7 @@ routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
+routes.post('/user/updateemail', controllersUser.UpdateEmail);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);

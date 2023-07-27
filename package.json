@@ -26,6 +26,7 @@
     "mysql2": "^3.2.3",
     "nodemailer": "^6.9.4",
     "nodemailer-express-handlebars": "^6.1.0",
+    "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "^2.0.22",
     "uniqid": "^5.4.0"
   }
