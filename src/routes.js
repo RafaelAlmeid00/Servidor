@@ -35,6 +35,9 @@ routes.post('/user/cpf', controllersUser.searchUserCPF);
 routes.post('/user/returnfundo', controllersUser.returnFundo);
 routes.post('/user/returnperfil', controllersUser.returnPerfil);
 routes.post('/user/validatetoken', controllersUser.validateToken);
+routes.post('/user/updatesenha', controllersUser.sendSenha);
+routes.post('/user/validadecode', controllersUser.validadeCode);
+routes.post('/user/update', controllersUser.UpdateUser);
 
 //recuperação de conta:
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
@@ -54,7 +57,6 @@ routes.post('/listcpf/search', controllerListCPF.searchCpf);
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
-routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);

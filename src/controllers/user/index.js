@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
-
+const crypto = require('crypto');
 const storage2 = multer.diskStorage({
   destination: './user/perfil',
   filename: function (req, file, cb) {
@@ -29,6 +29,7 @@ function generateToken() {
   return uuid.v4();
 }
 let tokens = new Map();
+let codes = new Map();
 
 console.log(storage2, upload2);
 
@@ -471,7 +472,6 @@ async returnPerfil(req, res) {
 
 async sendEmail(req, res) {
   const { user_email: data } = req.body;
-  let { type: type } = req.body
   const { user_CPF: cpf } = req.body;
   const { user_nome: nome } = req.body;
   let token = ''
@@ -494,13 +494,9 @@ async sendEmail(req, res) {
       return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
     }
 
-    let mailOptions = {}
-
-    if (type = "email") {
       token = generateToken();
       const timestamp = moment().unix();
       tokens.set(token, timestamp);
-    }
 
     const emailBody = `
    <!DOCTYPE html>
@@ -578,11 +574,7 @@ async sendEmail(req, res) {
 </body>
 </html>
   `;
-
-    switch (type) {
-      case "email":
-
-        mailOptions = {
+        const mailOptions = {
           from: process.env.email,
           to: data,
           subject: 'Alteração de email: EasyPass',
@@ -590,21 +582,6 @@ async sendEmail(req, res) {
         };
         console.log(mailOptions);
 
-        break;
-      case "senha":
-
-        mailOptions = {
-          from: process.env.email,
-          to: data,
-          subject: 'E-mail enviado usando Node!',
-          text: 'Bem fácil, não? ;)'
-        };
-        console.log(mailOptions);
-        break;
-
-    }
-
-    console.log(mailOptions);
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.error('Erro no envio do Email:', error);
@@ -620,6 +597,173 @@ async sendEmail(req, res) {
     res.status(400).send('Erro na requisição de envio do Email.');
   }
 },
+
+async sendSenha(req, res) {
+  const { user_CPF: cpf } = req.body;
+  let uniqueCode = ''
+
+  const userGet = await knex('user').where('user_CPF', '=', cpf).first();
+  console.log(userGet);
+  let data  = userGet.user_email;
+  let nome  = userGet.user_nome;
+  
+
+  console.log(data, nome, cpf);
+
+  try {
+   const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.email,
+        pass: process.env.senhaemail,
+        clientId: process.env.idclient,
+        clientSecret: process.env.secretkey,
+        refreshToken: process.env.refreshtoken
+      }
+    });
+
+    function formatarCPF(cpf) {
+      const cpfSemDigitos = cpf.slice(0, -3);
+      return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+    }
+
+    function generateUnique6DigitCode() {
+  const randomBytes = crypto.randomBytes(3); // Generate 3 random bytes
+  const uniqueCode = randomBytes.toString('hex').slice(0, 6).toUpperCase();
+  return uniqueCode;
+}
+    const uniqueCode = generateUnique6DigitCode();
+    const timestamp = moment().unix();
+    codes.set(uniqueCode, timestamp);
+
+   const senhaBody = `
+   <!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Estilos para o card */
+    .card {
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      width: 70vw;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center; /* Adicionamos alinhamento central para o conteúdo dentro do card */
+    }
+
+    .card p {
+      margin-top: 5px;
+    }
+
+    /* Estilos para o texto dentro do card */
+    .card-text {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .card-text h1 {
+      color: #30e09a;
+    }
+
+     /* Estilos para o texto dentro do card */
+    .card-text-code {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .card-text-code h1 {
+      color: #30e09a;
+    }
+ /* Estilos para o banner */
+    .banner-code {
+      background-color:transparent; /* Cor de fundo com transparência */
+      box-shadow: 0 8px 16px rgba(48, 224, 154, 0.1); /* Sombras */
+      border-radius: 20px; /* Borda arredondada */
+      padding: 10px; /* Espaçamento interno */
+      margin-bottom: 20px; /* Espaçamento inferior para separar do parágrafo abaixo */
+    }
+
+    /* Estilos para o banner */
+    .banner {
+      background-color: rgba(48, 224, 154, 0.2); /* Cor de fundo com transparência */
+      box-shadow: 0 8px 16px rgba(48, 224, 154, 0.1); /* Sombras */
+      border-radius: 20px; /* Borda arredondada */
+      padding: 10px; /* Espaçamento interno */
+      margin-bottom: 20px; /* Espaçamento inferior para separar do parágrafo abaixo */
+    }
+
+    /* Estilos para o botão */
+    .button {
+      display: block; /* Alteramos de flex para block para que o botão não ocupe toda a largura do card */
+      margin: 0 auto; /* Adicionamos margens automáticas para centralizar o botão horizontalmente */
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white; /* Alteramos a cor do texto para branco */
+      background-color: #1976d2;
+      border: none;
+      border-radius: 5px;
+      transition: border 0.3s;
+      margin-top: 50px;
+      width: 200px;
+    }
+
+    /* Estilos para o hover do botão */
+    .button:hover {
+      border: 2px solid #30e09a;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-text">
+      <div class="banner"> <!-- Novo elemento para o banner -->
+        <h1>EasyPass</h1>
+      </div>
+    </div>
+    <p>Olá, ${nome}!</p>
+        <p>Parece que você esqueceu sua senha.</p>
+    <p>Aqui está o seu código para recuperar a senha da sua conta EasyPass: CPF - ${formatarCPF(cpf)}</p>
+     <div class="card-text-code">
+      <div class="banner-code"> <!-- Novo elemento para o banner -->
+      <h1>${uniqueCode}</h1>
+      </div>
+  </div>
+</body>
+</html>
+  `;
+
+      const mailOptions = {
+          from: process.env.email,
+          to: data,
+          subject: 'Recuperação de senha: EasyPass',
+          html: senhaBody
+        };
+        
+        console.log(mailOptions);
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.error('Erro no envio do Email:', error);
+        res.status(400).send('Erro no envio do Email.');
+      } else {
+        console.log(info);
+        console.log('Email enviado com sucesso para:', data);
+        res.status(200).send('Email enviado com sucesso ao: ' + data);
+      }
+    });
+  } catch (error) {
+    console.error('Erro na requisição de envio do Email:', error);
+    res.status(400).send('Erro na requisição de envio do Email.');
+  }
+},
+
 
     async validateToken(req, res) {
       const { token } = req.body;
@@ -644,6 +788,32 @@ async sendEmail(req, res) {
 
         res.status(200).json({ valid: false });
       }
+    },
+
+       async validadeCode(req, res) {
+      const { code } = req.body;
+
+      if (codes.has(code)) {
+        const timestamp = codes.get(code);
+
+        const currentTime = moment().unix();
+        const timeDifference = currentTime - timestamp;
+
+        const expirationTime = 15 * 60;
+
+        if (timeDifference <= expirationTime) {
+
+          res.status(200).json({ valid: true });
+        } else {
+
+          codes.delete(code); 
+          res.status(200).json({ valid: false });
+        }
+      } else {
+
+        res.status(200).json({ valid: false });
+      }
     }
+
 
 };
