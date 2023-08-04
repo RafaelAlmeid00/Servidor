@@ -16,10 +16,12 @@ module.exports = {
                     
                     return decoded
                 });
-                return recive
+                console.log('this is recive: ', recive);
+                    return recive;
+                
             } catch (error) {
                 console.log(error);
-                return res.status(400).send(error);
+                return error
             }
             
         }

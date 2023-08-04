@@ -70,22 +70,29 @@ module.exports = {
             console.log('this is user code: ', code);
             const compare = await mid(req, res);
             console.log('this is compare carga: ', compare.carga);
-            encrypt.compare(code, compare.carga, async (err, comp) =>{
-              if (err || comp == false) {
-                console.log(err);
-                console.log('errado');
-                verified = false
-                return res.status(401).send(err)
-              }else
-               console.log('this is veredito: ', comp);
-               verified = true
-               const rec = await JWT.sign({
-                verified: verified
-              }, process.env.JWT_SECRET, { expiresIn: '1000000' })
-
-              console.log('take me to church: ', compare);
-              res.status(201).json({RecToken: rec});
-            });
+            if (compare.carga != undefined) {
+              encrypt.compare(code, compare.carga, async (err, comp) =>{
+                if (err || comp == false) {
+                  console.log(err);
+                  console.log('errado');
+                  verified = false
+                  return res.status(401).send(err)
+                }else
+                 console.log('this is veredito: ', comp);
+                 verified = true
+                 const rec = await JWT.sign({
+                  verified: verified
+                }, process.env.JWT_SECRET, { expiresIn: '1000000' })
+  
+                console.log('take me to church: ', compare);
+                res.status(201).json({RecToken: rec});
+              });
+            }else{
+              console.log('erro, erro');
+              
+              res.status(401).send('error')
+            }
+            
            
         }catch(erro){console.log(erro); res.send(erro)}
     }

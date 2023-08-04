@@ -1,15 +1,15 @@
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config()
 
 module.exports = {
     development : {
         client : 'mysql2',
         connection: {
-            host: process.env.host,
-            port: process.env.portdb,
-            user: process.env.user,
-            password: process.env.senha,
-            database: process.env.db,
+            host: process.env.HOST,
+            port: process.env.PORTDB,
+            user: process.env.USERDB,
+            password: process.env.SENHA,
+            database: process.env.DB,
         }
     }
 }

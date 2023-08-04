@@ -24,6 +24,10 @@ const RecMid = require('./others/rec_mid');
 
 const routes = express.Router();
 
+const dotenv = require('dotenv');
+dotenv.config();
+ 
+console.log('this is userdb aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ', process.env.JWT_SECRET);
 routes.use(cookie());
 routes.use(cors());
 
@@ -36,6 +40,7 @@ routes.post('/user/returnfundo', controllersUser.returnFundo);
 routes.post('/user/returnperfil', controllersUser.returnPerfil);
 
 //recuperação de conta:
+
 routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
 routes.post('/user/login/Rec', othersRec_Pass.compareEmail);
 

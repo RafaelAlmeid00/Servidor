@@ -146,7 +146,7 @@ async UserLogin(req, res) {
       bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
         if (err || comp == false) {
           console.log('comp: ', comp);
-          console.log(err);
+          console.log('this is err: ', err);
         } else {
           console.log('this is comp: ', comp);
 
