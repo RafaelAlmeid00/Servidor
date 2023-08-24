@@ -15,12 +15,10 @@ const controllerStop = require('./controllers/bus_stop/index');
 const controllerTurn = require('./controllers/turn_bus/index');
 const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
-const othersRec_Pass = require('./others/rec_pass')
 const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
 
 const middleware = require('./controllers/Middleware');
-const RecMid = require('./others/rec_mid');
 
 const routes = express.Router();
 
@@ -38,12 +36,10 @@ routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
 routes.post('/user/returnfundo', controllersUser.returnFundo);
 routes.post('/user/returnperfil', controllersUser.returnPerfil);
-
-//recuperação de conta:
-
-routes.post('/user/login/PassRec', othersRec_Pass.EmailRec);
-routes.post('/user/login/Rec', othersRec_Pass.compareEmail);
-
+routes.post('/user/validatetoken', controllersUser.validateToken);
+routes.post('/user/updatesenha', controllersUser.sendSenha);
+routes.post('/user/validadecode', controllersUser.validadeCode);
+routes.post('/user/update', controllersUser.UpdateUser);
 
 routes.post('/bussines', controllersBussines.createBussines);
 routes.get('/bussines', controllersBussines.searchBussines);
@@ -58,11 +54,10 @@ routes.post('/listcpf/search', controllerListCPF.searchCpf);
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
-routes.post('/user/update', controllersUser.UpdateUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
-routes.post('/user/updateemail', controllersUser.UpdateEmail);
+routes.post('/user/updateemail', controllersUser.sendEmail);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
