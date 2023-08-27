@@ -25,7 +25,6 @@ const routes = express.Router();
 routes.use(cookie());
 routes.use(cors());
 
-routes.post('/user', controllersUser.root);
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
@@ -54,6 +53,9 @@ routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
 routes.post('/user/updateemail', controllersUser.sendEmail);
+routes.post('/user/rgtras', controllersUser.uploadDocumentosRGtras);
+routes.post('/user/rgfrente', controllersUser.uploadDocumentosRG);
+routes.post('/user/facialupload', controllersUser.uploadDocumentosfacial);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
@@ -95,9 +97,7 @@ routes.get('/sac', controllersSac.Search);
 routes.post('/message', controllerMessage.CadMessage);
 routes.get('/message', controllerMessage.SearchMessage)
 
-routes.post('/validation', controllerValidation.cadVal)
-routes.post('/validation/search', controllerValidation.searchVal);
-routes.post('/validation', controllerValidation.searchValAll);
+routes.post('/validation', controllerValidation.searchVal);
 routes.delete('/validation', controllerValidation.deleteVal);
 
 module.exports = routes;
