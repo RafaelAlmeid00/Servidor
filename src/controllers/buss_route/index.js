@@ -30,27 +30,28 @@ module.exports = {
             const { route_num: num } = req.body;
             const { route_nome: nome } = req.body
             if (num) {
-                const consultName = await knex("bus_route").where('route_num', '=', num)
-                const consultRoutes = await knex("routes").where('bus_route_rote_id', '=', consultName[0].rote_id);
-                if (consultName[0].rote_id == '' || consultRoutes == '') {
-                    return res.status(404).send("Route not found");
-                }
-                console.log('test consultRoutes: ', consultRoutes);
-                var consultStop = new Array
-                for (let index = 0; index < consultRoutes.length; index++) {
-                    const [ destruct ] = await knex("bus_stop").where('stop_id', '=', consultRoutes[index].bus_stop_stop_id)
-                    consultStop.push(destruct);
-                    console.log('this is consultStop: ', consultStop);
-                    console.log('teste index: ', index, ' and ', consultRoutes.length);
+                const consultName = await knex("bus_route").where('route_num', '=', num);
+
+                console.log('this is consultname: ', consultName);
+                if (consultName[0] != undefined || consultName[0] == '') {
+                    const consultRoutes = await knex("routes").where('bus_route_rote_id', '=', consultName[0].rote_id);
                     
-                    if (consultRoutes.length == (index + 1)) {
-                        console.log('aaaaaaaaaaaaa');
-                        const relatory = {consultName, consultStop}
-                        return res.status(201).send(relatory);
-                    }
-                } if (consultName.length == 0 ) {
-                    return res.status(404).send("Route not found");
-                }
+                    console.log('test consultRoutes: ', consultRoutes);
+                    var consultStop = new Array
+                    for (let index = 0; index < consultRoutes.length; index++) {
+                        const [ destruct ] = await knex("bus_stop").where('stop_id', '=', consultRoutes[index].bus_stop_stop_id)
+                        consultStop.push(destruct);
+                        console.log('this is consultStop: ', consultStop);
+                        console.log('teste index: ', index, ' and ', consultRoutes.length);
+                        
+                        if (consultRoutes.length == (index + 1)) {
+                            console.log('aaaaaaaaaaaaa');
+                            const relatory = {consultName, consultStop}
+                            return res.status(201).send(relatory);
+                        }
+                    } if (consultName.length == 0 ) {
+                        return res.status(404).send("Route not found");
+                }}else{return res.status(404).send("Route not found")}
             } else if (nome != undefined) {
                 const consultName = await knex("bus_route").where('route_nome', 'like', `%${nome}%`);
                 const consultRoutes = await knex("routes").where('bus_route_rote_id', '=', consultName[0].rote_id);
