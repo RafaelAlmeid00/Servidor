@@ -26,7 +26,7 @@ const storage2 = multer.diskStorage({
 const upload2 = multer({ storage: storage2 });
 
 const storage3 = multer.diskStorage({
-  destination: '../user/documentos/rgfrente',
+  destination: './user/documentos/rgfrente',
   filename: function (req, file, cb) {
     const uniqueFilename = uniqid() + path.extname(file.originalname);
     cb(null, uniqueFilename);
@@ -35,7 +35,7 @@ const storage3 = multer.diskStorage({
 const upload3 = multer({ storage: storage3 });
 
 const storage4 = multer.diskStorage({
-  destination: '../user/documentos/facial',
+  destination: './user/documentos/facial',
   filename: function (req, file, cb) {
     const uniqueFilename = uniqid() + path.extname(file.originalname);
     cb(null, uniqueFilename);
@@ -44,7 +44,7 @@ const storage4 = multer.diskStorage({
 const upload4 = multer({ storage: storage4 });
 
 const storage5 = multer.diskStorage({
-  destination: '../user/documentos/rgtras',
+  destination: './user/documentos/rgtras',
   filename: function (req, file, cb) {
     const uniqueFilename = uniqid() + path.extname(file.originalname);
     cb(null, uniqueFilename);

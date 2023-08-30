@@ -32,6 +32,7 @@
     "nodemailer-express-handlebars": "^6.1.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "objection": "^3.1.1",
+    "stripe": "^13.3.0",
     "uniqid": "^5.4.0",
     "uuid": "^9.0.0"
   },

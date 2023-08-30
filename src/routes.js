@@ -17,6 +17,7 @@ const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
 const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
+const controllerStriper = require('./controllers/pagamentos/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -24,8 +25,7 @@ const routes = express.Router();
 
 const dotenv = require('dotenv');
 dotenv.config();
- 
-console.log('this is userdb aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ', process.env.JWT_SECRET);
+
 routes.use(cookie());
 routes.use(cors());
 
@@ -103,5 +103,12 @@ routes.get('/message', controllerMessage.SearchMessage)
 
 routes.post('/validation', controllerValidation.searchVal);
 routes.delete('/validation', controllerValidation.deleteVal);
+
+routes.post('/cliente', controllerStriper.createCustomer);
+routes.post('/cliente/search', controllerStriper.searchCustomerByCPF);
+routes.post('/produto', controllerStriper.createProduto);
+routes.post('/checkout', controllerStriper.createSession);
+routes.post('/checkout/success', controllerStriper.createSession);
+
 
 module.exports = routes;
