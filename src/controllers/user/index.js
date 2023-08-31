@@ -195,7 +195,9 @@ async UserLogin(req, res) {
             user_tipo: takeCPF.user_tipo,
             user_status: takeCPF.user_status,
             user_credit: takeCPF.user_credit,
-            user_Background: takeCPF.user_Background
+            user_Background: takeCPF.user_Background,
+            user_cel: takeCPF.user_cel,
+            user_idcli: takeCPF.user_idcli
           }, process.env.JWT_SECRET, { expiresIn: '7d' });
           console.log('this is req.headers: ', req.headers);
 

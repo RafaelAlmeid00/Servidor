@@ -7,9 +7,10 @@ module.exports = {
     const {token: token} = req.body
     const authheader = req.headers['authorization']
     console.log('Middleware called');
-    console.log(token, authheader);
     const test = process.env.JWT_SECRET;
-    
+    console.log(token);
+    console.log(authheader);
+
     if (token || authheader) {
       try {
         jwt.verify(token ? token : authheader, test, (err, decoded) => {

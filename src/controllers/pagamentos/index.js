@@ -1,86 +1,161 @@
-const Stripe = require('stripe');
-const stripe = new Stripe('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');
+const fetch = require('node-fetch');
+const dotenv = require('dotenv');
+dotenv.config();
+const token = process.env.token
+const knex = require('../../database/index')
+const listaPagamentos = []; 
 
 module.exports = {
-    async createCustomer(req, res) {
-        const { cliente } = req.body;
-        console.log('Cliente:', cliente);
-        try {
-            const customer = await stripe.customers.create({
-                ...cliente // Spread o objeto cliente dentro da chamada da função
-            });
-            console.log('Cliente criado:', customer);
-            res.status(200).json({ message: 'Cliente criado com sucesso', cliente: customer});
-        } catch (error) {
-            console.error('Erro ao criar cliente:', error);
-            res.status(500).json({ message: 'Erro ao criar cliente' });
-        }
-    },
+  async createCustomer(req, res) {
+    const { cliente } = req.body;
+    console.log(cliente);
+    console.log(JSON.stringify(cliente));
 
-    async searchCustomerByCPF(req, res) {
-    const { user_CPF: cpf } = req.body;
+    const url = 'https://api.asaas.com/v3/customers';
+    const options = {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        access_token: token
+      },
+      body: JSON.stringify(cliente) // Envia o objeto cliente como JSON no corpo da solicitação
+    };
 
     try {
-        const customers = await stripe.customers.list();
-        
-        const foundCustomers = customers.data.filter(customer => {
-            const customerCPF = customer.metadata.cpf;
-            return customerCPF === cpf;
-        });
-
-        if (foundCustomers.length > 0) {
-            console.log('Clientes encontrados:', foundCustomers);
-            res.status(200).json({ customers: foundCustomers });
-        } else {
-            console.log('Clientes não encontrados');
-            res.status(404).json({ message: 'Clientes não encontrados' });
-        }
+      const response = await fetch(url, options);
+      const customer = await response.json();
+      console.log('Cliente criado:', customer);
+      console.log(customer.id);
+      res.status(200).json({ message: 'Cliente criado com sucesso', cliente: customer, idcli: customer.id });
     } catch (error) {
-        console.error('Erro ao buscar clientes:', error);
-        res.status(500).json({ message: 'Erro ao buscar clientes' });
+      console.error('Erro ao criar cliente:', error);
+      res.status(500).json({ message: 'Erro ao criar cliente' });
+    }
+  },
+
+ async searchCustomer(req, res) {
+    const idcli = req.query.idcli; 
+
+    if (!idcli) {
+        return res.status(400).json({ message: 'ID do cliente ausente ou inválido' });
+    }
+
+    const url = `https://api.asaas.com/v3/customers/${idcli}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            access_token: token
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const customer = await response.json();
+        console.log('Cliente criado:', customer);
+        console.log(customer.id);
+        res.status(200).json({ message: 'Cliente pego com sucesso', cliente: customer });
+    } catch (error) {
+        console.log(error);
+        console.error('Erro ao pegar cliente:', error);
+        res.status(500).json({ message: 'Erro ao pegar cliente' });
     }
 },
 
-async createProduto(req, res) {
-        const { produto } = req.body;
-        console.log('Produto:', produto);
-        try {
-            const product = await stripe.products.create({
-                ...produto // Spread o objeto cliente dentro da chamada da função
-            });
-            console.log('Produto criado:', product);
-            res.status(200).json({ message: 'Produto criado com sucesso', Produto: product});
-        
-        } catch (error) {
-            console.error('Erro ao criar Produto:', error);
-            res.status(500).json({ message: 'Erro ao criar Produto' });
+async createPay(req, res) {
+    const { pagamento } = req.body;
+    console.log(pagamento);
+    console.log(JSON.stringify(pagamento));
+
+    const url = 'https://api.asaas.com/v3/payments';
+    const options = {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        access_token: token
+      },
+      body: JSON.stringify(pagamento) // Envia o objeto cliente como JSON no corpo da solicitação
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const payment = await response.json();
+      console.log('Pagamento criado:', payment);
+      listaPagamentos.push({ id: payment.id, status: payment.status, value: payment.value });
+      res.status(200).json({ message: 'Cliente criado com sucesso', pagamento: payment });
+    } catch (error) {
+      console.error('Erro ao criar pagamento:', error);
+      res.status(500).json({ message: 'Erro ao criar pagamento' });
+    }
+  },
+
+  async verifyPay(req, res) {
+  const idcli = req.body.params.idcli; 
+  const {dataCard} = req.body.params;
+  console.log(req.headers)
+    console.log(req.body)
+console.log(idcli)
+console.log(dataCard)
+    if (!idcli) {
+      console.log('ID do cliente ausente ou inválido');
+        return res.status(400).send({ message: 'ID do cliente ausente ou inválido' });
+    } 
+     if (!dataCard) {
+            console.log('Cartão do cliente ausente ou inválido');
+    return res.status(400).send({ message: 'Cartão do cliente ausente ou inválido' });
+  }
+    if (listaPagamentos.length === 0){
+          console.log('Sem pagamentos a verificar');
+          return res.status(400).send({ message: 'Sem pagamentos a verificar' });
+    }
+
+    console.log('foi aq1');
+    const url = `https://api.asaas.com/v3/payments?customer=${idcli}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            access_token: token
         }
-    },
+    };
+    console.log('foi aq2');
 
-    async createSession(req, res) {
-        const { cliente: clienteid } = req.body;
-        const { produto: prodid } = req.body;
-        console.log(prodid)
-                try {
-                    const session = await stripe.checkout.sessions.create({
-                        success_url: 'https://localhost:5173/sistema/pagamento/success',
-                        line_items: [
-                        {price: prodid, quantity: 1},
-                        ],
-                        mode: 'payment',
-                        customer: clienteid
-                    });
-                            console.log(prodid)
+        console.log('Pagamentos pendentes: ', listaPagamentos.length);
 
-                    res.status(200).json({ message: 'Checkout criado com sucesso', Sessão: session});
-                    res.redirect(303, session.success_url)
-                } catch (error) {
-                            console.log(prodid)
-                    console.error('Erro ao criar Checkout:', error);
-                            console.log(prodid)
 
-                }
-                
-            } 
+ try {
+      console.log('foi aq3');
+    const response = await fetch(url, options);
+    const payments = await response.json();
+    console.log('PAGAMENTOS:', payments)
+        console.log('foi aq4')
+  for (let i = 0; i < listaPagamentos.length; i++) {
+      const serverPayment = listaPagamentos[i];
+      for (const apiPayment of payments.data) {
+        if (
+          serverPayment.id === apiPayment.id &&
+          serverPayment.status === 'PENDING' &&
+          apiPayment.status === 'RECEIVED'
+        ) {
+          const cardToUpdate = await knex('card').where({ card_id: dataCard.card_id }).first();
+          if (cardToUpdate) {
+            await knex('card').where({ card_id: dataCard.card_id }).update({ card_saldo: cardToUpdate.card_saldo + apiPayment.value });
+            console.log('Pagamento verificado:', apiPayment.id);
+                    console.log('foi aq5')
+            res.status(200).json({ message: `Pagamento verificado: ${apiPayment.id}`});
+          }
+          listaPagamentos.splice(i, 1);
+          i--;
+          console.log('Pagamentos pendentes após verificação: ', listaPagamentos.length);
+        }
+      }
+    }} catch (error) {
+              console.log('foi aq6')
+    console.error('Erro ao verificar pagamento:', error);
+    res.status(500).json({ message: 'Erro ao verificar pagamento' });
+  }
 
+}
 };

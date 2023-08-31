@@ -17,7 +17,7 @@ const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
 const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
-const controllerStriper = require('./controllers/pagamentos/index')
+const controllerAsaas = require('./controllers/pagamentos/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -28,6 +28,8 @@ dotenv.config();
 
 routes.use(cookie());
 routes.use(cors());
+
+routes.post('/cliente', controllerAsaas.createCustomer);
 
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
@@ -104,11 +106,8 @@ routes.get('/message', controllerMessage.SearchMessage)
 routes.post('/validation', controllerValidation.searchVal);
 routes.delete('/validation', controllerValidation.deleteVal);
 
-routes.post('/cliente', controllerStriper.createCustomer);
-routes.post('/cliente/search', controllerStriper.searchCustomerByCPF);
-routes.post('/produto', controllerStriper.createProduto);
-routes.post('/checkout', controllerStriper.createSession);
-routes.post('/checkout/success', controllerStriper.createSession);
-
+routes.get('/cliente/search', controllerAsaas.searchCustomer);
+routes.post('/pagamento', controllerAsaas.createPay);
+routes.post('/pagamento/verify', controllerAsaas.verifyPay);
 
 module.exports = routes;
