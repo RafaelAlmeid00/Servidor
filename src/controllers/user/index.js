@@ -182,6 +182,7 @@ async UserLogin(req, res) {
           const token = JWT.sign({
             user_CPF: takeCPF.user_CPF,
             user_nome: takeCPF.user_nome,
+            user_RG: takeCPF.user_RG,
             user_email: takeCPF.user_email,
             user_FotoPerfil: takeCPF.user_FotoPerfil,
             user_nascimento: takeCPF.user_nascimento,
