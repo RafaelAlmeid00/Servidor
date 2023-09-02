@@ -20,17 +20,15 @@ async cadVal(req, res) {
     async searchVal (req, res) {
         try {
         const { user_CPF: cpf } = req.body;
-
-        // Buscar na tabela request_card com user_user_CPF igual a user_CPF
         const requestCards = await knex("request_card").where("user_user_CPF", "=", cpf);
-        
-        // Criar um array com os req_id das request cards encontradas
         const reqIds = requestCards.map(card => card.req_id);
-        
-        // Buscar na tabela card os cartões onde request_card_req_id está no array de reqIds e card_status é igual a 'ativo'
         const activeCards = await knex("card").whereIn("request_card_req_id", reqIds).where("card_status", "=", "ativo");
         
-        res.status(201).json(activeCards); // Envia os cartões ativos como resposta
+        console.log(requestCards);
+        console.log(reqIds);
+        console.log(activeCards);
+
+        res.status(201).json(activeCards);
         
     } catch (error) {
         res.status(401).send(error);
