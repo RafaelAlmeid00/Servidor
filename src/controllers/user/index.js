@@ -129,6 +129,7 @@ async searchUserCPF(req, res) {
             const { user_endcomplemento: comp } = req.body;
             const { user_endcidade: city } = req.body;
             const { user_tipo: type } = req.body;
+            const { user_cel: cel } = req.body;
             const { list_CPF_list_id: id } = req.body;
             console.log('teste rapidão: ', cpf);
 
@@ -150,7 +151,9 @@ async searchUserCPF(req, res) {
                 user_endcomplemento: comp,
                 user_endcidade: city,
                 user_tipo: type,
-                list_CPF_list_id: id
+                list_CPF_list_id: id,
+                user_cel: cel,
+                user_idcli: idcli
             });
        console.log('aaa');
 
@@ -176,6 +179,9 @@ async UserLogin(req, res) {
         if (err || comp == false) {
           console.log('comp: ', comp);
           console.log('this is err: ', err);
+          return res.status(201).send({
+            error: 'error'
+        });
         } else {
           console.log('this is comp: ', comp);
 
@@ -205,8 +211,7 @@ async UserLogin(req, res) {
         res.cookie('token', token, {secure: true})  
 
         return res.status(201).send({
-          token: token,
-          message: "ok!"
+          token: token
         });
         }
       });
