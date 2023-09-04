@@ -17,6 +17,7 @@ const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
 const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
+const controllerAsaas = require('./controllers/pagamentos/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -28,7 +29,8 @@ dotenv.config();
 routes.use(cookie());
 routes.use(cors());
 
-routes.post('/user', controllersUser.root);
+routes.post('/cliente', controllerAsaas.createCustomer);
+
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
@@ -57,6 +59,9 @@ routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
 routes.post('/user/perfilupload', controllersUser.uploadImagePerfil);
 routes.post('/user/updateemail', controllersUser.sendEmail);
+routes.post('/user/rgtras', controllersUser.uploadDocumentosRGtras);
+routes.post('/user/rgfrente', controllersUser.uploadDocumentosRG);
+routes.post('/user/facialupload', controllersUser.uploadDocumentosfacial);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
@@ -98,9 +103,11 @@ routes.get('/sac', controllersSac.Search);
 routes.post('/message', controllerMessage.CadMessage);
 routes.get('/message', controllerMessage.SearchMessage)
 
-routes.post('/validation', controllerValidation.cadVal)
-routes.post('/validation/search', controllerValidation.searchVal);
-routes.post('/validation', controllerValidation.searchValAll);
+routes.post('/validation', controllerValidation.searchVal);
 routes.delete('/validation', controllerValidation.deleteVal);
+
+routes.get('/cliente/search', controllerAsaas.searchCustomer);
+routes.post('/pagamento', controllerAsaas.createPay);
+routes.post('/pagamento/verify', controllerAsaas.verifyPay);
 
 module.exports = routes;

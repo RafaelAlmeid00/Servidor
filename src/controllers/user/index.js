@@ -25,6 +25,33 @@ const storage2 = multer.diskStorage({
 });
 const upload2 = multer({ storage: storage2 });
 
+const storage3 = multer.diskStorage({
+  destination: './user/documentos/rgfrente',
+  filename: function (req, file, cb) {
+    const uniqueFilename = uniqid() + path.extname(file.originalname);
+    cb(null, uniqueFilename);
+  }
+});
+const upload3 = multer({ storage: storage3 });
+
+const storage4 = multer.diskStorage({
+  destination: './user/documentos/facial',
+  filename: function (req, file, cb) {
+    const uniqueFilename = uniqid() + path.extname(file.originalname);
+    cb(null, uniqueFilename);
+  }
+});
+const upload4 = multer({ storage: storage4 });
+
+const storage5 = multer.diskStorage({
+  destination: './user/documentos/rgtras',
+  filename: function (req, file, cb) {
+    const uniqueFilename = uniqid() + path.extname(file.originalname);
+    cb(null, uniqueFilename);
+  }
+});
+const upload5 = multer({ storage: storage5 });
+
 function generateToken() {
   return uuid.v4();
 }
@@ -39,13 +66,6 @@ dotenv.config();
 
 
 module.exports = {
-    async root(req, res) {
-        try {
-            return res.send("Response of Client Server");
-        } catch (error) {
-            return res.status(400).json({ error: error.message });
-        }
-    },
 
     async searchUser(req, res) {
         try {
@@ -109,10 +129,12 @@ async searchUserCPF(req, res) {
             const { user_endcomplemento: comp } = req.body;
             const { user_endcidade: city } = req.body;
             const { user_tipo: type } = req.body;
+            const { user_cel: cel } = req.body;
             const { list_CPF_list_id: id } = req.body;
             console.log('teste rapidão: ', cpf);
 
             const senha = await bcrypt.hash(password, 10);
+       console.log('aaabbb');
 
             await knex("user").insert({
                 user_CPF: cpf,
@@ -129,12 +151,16 @@ async searchUserCPF(req, res) {
                 user_endcomplemento: comp,
                 user_endcidade: city,
                 user_tipo: type,
-                list_CPF_list_id: id
+                list_CPF_list_id: id,
+                user_cel: cel,
+                user_idcli: idcli
             });
+       console.log('aaa');
 
         return res.status(201).send("User registered");
     } catch (error) {
-        return res.status(400).send({ error: error.message });
+       console.log(error);
+        return res.status(400).send({ error: error.message, error });
     }
     },
 
@@ -153,12 +179,16 @@ async UserLogin(req, res) {
         if (err || comp == false) {
           console.log('comp: ', comp);
           console.log('this is err: ', err);
+          return res.status(201).send({
+            error: 'error'
+        });
         } else {
           console.log('this is comp: ', comp);
 
           const token = JWT.sign({
             user_CPF: takeCPF.user_CPF,
             user_nome: takeCPF.user_nome,
+            user_RG: takeCPF.user_RG,
             user_email: takeCPF.user_email,
             user_FotoPerfil: takeCPF.user_FotoPerfil,
             user_nascimento: takeCPF.user_nascimento,
@@ -172,15 +202,16 @@ async UserLogin(req, res) {
             user_tipo: takeCPF.user_tipo,
             user_status: takeCPF.user_status,
             user_credit: takeCPF.user_credit,
-            user_Background: takeCPF.user_Background
+            user_Background: takeCPF.user_Background,
+            user_cel: takeCPF.user_cel,
+            user_idcli: takeCPF.user_idcli
           }, process.env.JWT_SECRET, { expiresIn: '7d' });
           console.log('this is req.headers: ', req.headers);
 
         res.cookie('token', token, {secure: true})  
 
         return res.status(201).send({
-          token: token,
-          message: "ok!"
+          token: token
         });
         }
       });
@@ -813,7 +844,164 @@ async sendSenha(req, res) {
 
         res.status(200).json({ valid: false });
       }
+    },
+
+    async uploadDocumentosRG(req, res) {
+  try {
+    console.log('até aqui foi');
+
+    const token = req.headers['authorization'];
+const cpf = req.headers['user_cpf'];
+console.log(req.headers);
+    console.log(cpf);
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' });
     }
+
+    upload3.single('selectedImage')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        console.log(err);
+        return res.status(400).json({ error: 'Error uploading image.' });
+      } else if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Unexpected error.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      if (!req.file) {
+        console.log({ error: 'No image file provided.' });
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      // Se chegou até aqui, o upload foi bem-sucedido.
+  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+      console.log('foi');
+      try {
+        console.log(req.file.filename);
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      await knex('user').where('user_CPF', '=', cpf).update({
+          user_RGFrente: req.file.filename, // Nome do arquivo gerado pelo multer
+        });
+
+        return res.json({ imageUrl: req.file.filename });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error uploading image.' });
+  }
+},
+
+    async uploadDocumentosRGtras(req, res) {
+  try {
+    console.log('até aqui foi');
+
+    const token = req.headers['authorization'];
+const cpf = req.headers['user_cpf'];
+console.log(req.headers);
+    console.log(cpf);
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' });
+    }
+
+    upload5.single('selectedImage')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        console.log(err);
+        return res.status(400).json({ error: 'Error uploading image.' });
+      } else if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Unexpected error.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      if (!req.file) {
+        console.log({ error: 'No image file provided.' });
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      // Se chegou até aqui, o upload foi bem-sucedido.
+  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+      console.log('foi');
+      try {
+        console.log(req.file.filename);
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      await knex('user').where('user_CPF', '=', cpf).update({
+          user_RGTras: req.file.filename, // Nome do arquivo gerado pelo multer
+        });
+
+        return res.json({ imageUrl: req.file.filename });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error uploading image.' });
+  }
+},
+
+    async uploadDocumentosfacial(req, res) {
+  try {
+    console.log('até aqui foi');
+
+    const token = req.headers['authorization'];
+const cpf = req.headers['user_cpf'];
+console.log(req.headers);
+    console.log(cpf);
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' });
+    }
+
+    upload4.single('selectedImage')(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        console.log(err);
+        return res.status(400).json({ error: 'Error uploading image.' });
+      } else if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Unexpected error.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      if (!req.file) {
+        console.log({ error: 'No image file provided.' });
+        return res.status(400).json({ error: 'No image file provided.' });
+      }
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      // Se chegou até aqui, o upload foi bem-sucedido.
+  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+      console.log('foi');
+      try {
+        console.log(req.file.filename);
+      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+      await knex('user').where('user_CPF', '=', cpf).update({
+          user_FotoRec: req.file.filename, // Nome do arquivo gerado pelo multer
+        });
+
+        return res.json({ imageUrl: req.file.filename });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error uploading image.' });
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error uploading image.' });
+  }
+},
+
 
 
 };

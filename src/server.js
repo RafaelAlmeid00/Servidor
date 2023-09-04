@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 app.use(cookieParser());
-
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
