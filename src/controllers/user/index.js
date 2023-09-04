@@ -67,173 +67,130 @@ dotenv.config();
 
 module.exports = {
 
-    async searchUser(req, res) {
-        try {
-            console.log('aaaaaaaaaaaaaaaa');
-            const result = await knex("user");
-            res.status(201).json(result);
-        } catch (error) {
-            console.log('error: ', error);
-            return res.status(400).json({ error: error.message });
-        }
-    },
-    
-async searchUserEmail(req, res) {
-  const { user_email: email } = req.body;
-  
-  try {
-    const takeEmail = await knex("user").where("user_email", "=", email).first();
-
-    if (!takeEmail) {
-      return res.status(404).json({ error: "E-mail não encontrado." });
-    }
-
-    res.status(200).send(takeEmail);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-},
-
-async searchUserCPF(req, res) {
-  const { user_CPF: cpf } = req.body;
-  
-  try {
-    const takeCPF = await knex("user").where("user_CPF", "=", cpf).first();
-
-    if (!takeCPF) {
-      return res.status(404).json({ error: "CPF não encontrado." });
-    }
-
-    res.status(200).send(takeCPF);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-},
-
-
-
-    async createUser(req, res) {
-        try {
-            
-            const { user_CPF: cpf } = req.body;
-            const { user_RG: rg } = req.body;
-            const { user_nome: name } = req.body;
-            const { user_email: email } = req.body;
-            const { user_senha: password } = req.body;
-            const { user_nascimento: date } = req.body;
-            const { user_endCEP: cep } = req.body;
-            const { user_endUF: UF } = req.body;
-            const { user_endbairro: district } = req.body;
-            const { user_endrua: street } = req.body;
-            const { user_endnum: num } = req.body;
-            const { user_endcomplemento: comp } = req.body;
-            const { user_endcidade: city } = req.body;
-            const { user_tipo: type } = req.body;
-            const { user_cel: cel } = req.body;
-            const { list_CPF_list_id: id } = req.body;
-            console.log('teste rapidão: ', cpf);
-
-            const senha = await bcrypt.hash(password, 10);
-       console.log('aaabbb');
-
-            await knex("user").insert({
-                user_CPF: cpf,
-                user_RG: rg,
-                user_nome: name,
-                user_email: email,
-                user_senha: senha,
-                user_nascimento: date,
-                user_endCEP: cep,
-                user_endUF: UF,
-                user_endbairro: district,
-                user_endrua: street,
-                user_endnum: num,
-                user_endcomplemento: comp,
-                user_endcidade: city,
-                user_tipo: type,
-                list_CPF_list_id: id,
-                user_cel: cel,
-                user_idcli: idcli
-            });
-       console.log('aaa');
-
-        return res.status(201).send("User registered");
-    } catch (error) {
-       console.log(error);
-        return res.status(400).send({ error: error.message, error });
-    }
-    },
-
-  
-async UserLogin(req, res) {
-  try {
-    const { user_CPF: cpf2 } = req.body;
-    console.log(cpf2);
-    const { user_senha: password } = req.body;
-    console.log('this is the password: ', password);
-
-    const [ takeCPF ] = await knex("user").where("user_CPF", "=", String(cpf2));
-
-    if (takeCPF != undefined) {
-      bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
-        if (err || comp == false) {
-          console.log('comp: ', comp);
-          console.log('this is err: ', err);
-          return res.status(201).send({
-            error: 'error'
-        });
-        } else {
-          console.log('this is comp: ', comp);
-
-          const token = JWT.sign({
-            user_CPF: takeCPF.user_CPF,
-            user_nome: takeCPF.user_nome,
-            user_RG: takeCPF.user_RG,
-            user_email: takeCPF.user_email,
-            user_FotoPerfil: takeCPF.user_FotoPerfil,
-            user_nascimento: takeCPF.user_nascimento,
-            user_endCEP: takeCPF.user_endCEP,
-            user_endUF: takeCPF.user_endUF,
-            user_endbairro: takeCPF.user_endbairro,
-            user_endrua: takeCPF.user_endrua,
-            user_endnum: takeCPF.user_endnum,
-            user_endcomplemento: takeCPF.user_endcomplemento,
-            user_endcidade: takeCPF.user_endcidade,
-            user_tipo: takeCPF.user_tipo,
-            user_status: takeCPF.user_status,
-            user_credit: takeCPF.user_credit,
-            user_Background: takeCPF.user_Background,
-            user_cel: takeCPF.user_cel,
-            user_idcli: takeCPF.user_idcli
-          }, process.env.JWT_SECRET, { expiresIn: '7d' });
-          console.log('this is req.headers: ', req.headers);
-
-        res.cookie('token', token, {secure: true})  
-
-        return res.status(201).send({
-          token: token
-        });
-        }
-      });
-    }else{res.status(400).send('email ou senha inválido')} 
-  } catch (error) {
-    res.status(400).send(error);
-    console.log(error);
-  }
-},
-
-  async UpdateToken(req, res) {
+  async searchUser(req, res) {
     try {
+      console.log('aaaaaaaaaaaaaaaa');
+      const result = await knex("user");
+      res.status(201).json(result);
+    } catch (error) {
+      console.log('error: ', error);
+      return res.status(400).json({ error: error.message });
+    }
+  },
+
+  async searchUserEmail(req, res) {
+    const { user_email: email } = req.body;
+
+    try {
+      const takeEmail = await knex("user").where("user_email", "=", email).first();
+
+      if (!takeEmail) {
+        return res.status(404).json({ error: "E-mail não encontrado." });
+      }
+
+      res.status(200).send(takeEmail);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  async searchUserCPF(req, res) {
+    const { user_CPF: cpf } = req.body;
+
+    try {
+      const takeCPF = await knex("user").where("user_CPF", "=", cpf).first();
+
+      if (!takeCPF) {
+        return res.status(404).json({ error: "CPF não encontrado." });
+      }
+
+      res.status(200).send(takeCPF);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+
+
+  async createUser(req, res) {
+    try {
+
       const { user_CPF: cpf } = req.body;
-      console.log(cpf);
+      const { user_RG: rg } = req.body;
+      const { user_nome: name } = req.body;
+      const { user_email: email } = req.body;
+      const { user_senha: password } = req.body;
+      const { user_nascimento: date } = req.body;
+      const { user_endCEP: cep } = req.body;
+      const { user_endUF: UF } = req.body;
+      const { user_endbairro: district } = req.body;
+      const { user_endrua: street } = req.body;
+      const { user_endnum: num } = req.body;
+      const { user_endcomplemento: comp } = req.body;
+      const { user_endcidade: city } = req.body;
+      const { user_tipo: type } = req.body;
+      const { list_CPF_list_id: id } = req.body;
+      const { user_cel: cel } = req.body;
+      const { user_idcli: idcli } = req.body;
 
-      // Use o await para aguardar a consulta ao banco de dados
-      const [takeCPF] = await knex("user").where("user_CPF", "=", cpf);
+      console.log('teste rapidão: ', cpf);
 
-      if (takeCPF !== undefined) {
+      const senha = await bcrypt.hash(password, 10);
+      console.log('aaabbb');
+
+      await knex("user").insert({
+        user_CPF: cpf,
+        user_RG: rg,
+        user_nome: name,
+        user_email: email,
+        user_senha: senha,
+        user_nascimento: date,
+        user_endCEP: cep,
+        user_endUF: UF,
+        user_endbairro: district,
+        user_endrua: street,
+        user_endnum: num,
+        user_endcomplemento: comp,
+        user_endcidade: city,
+        user_tipo: type,
+        list_CPF_list_id: id,
+        user_cel: cel,
+        user_idcli: idcli
+      });
+      console.log('aaa');
+
+      return res.status(201).send("User registered");
+    } catch (error) {
+      console.log(error);
+      return res.status(400).send({ error: error.message, error });
+    }
+  },
+
+
+  async UserLogin(req, res) {
+    try {
+      const { user_CPF: cpf2 } = req.body;
+      console.log(cpf2);
+      const { user_senha: password } = req.body;
+      console.log('this is the password: ', password);
+
+      const [takeCPF] = await knex("user").where("user_CPF", "=", String(cpf2));
+
+      if (takeCPF != undefined) {
+        bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
+          if (err || comp == false) {
+            console.log('comp: ', comp);
+            console.log('this is err: ', err);
+            return res.status(201).send({
+              error: 'error'
+            });
+          } else {
+            console.log('this is comp: ', comp);
+
             const token = JWT.sign({
               user_CPF: takeCPF.user_CPF,
               user_nome: takeCPF.user_nome,
+              user_RG: takeCPF.user_RG,
               user_email: takeCPF.user_email,
               user_FotoPerfil: takeCPF.user_FotoPerfil,
               user_nascimento: takeCPF.user_nascimento,
@@ -246,19 +203,66 @@ async UserLogin(req, res) {
               user_endcidade: takeCPF.user_endcidade,
               user_tipo: takeCPF.user_tipo,
               user_status: takeCPF.user_status,
-            user_credit: takeCPF.user_credit,
-            user_Background: takeCPF.user_Background
-
+              user_credit: takeCPF.user_credit,
+              user_Background: takeCPF.user_Background,
+              user_cel: takeCPF.user_cel,
+              user_idcli: takeCPF.user_idcli
             }, process.env.JWT_SECRET, { expiresIn: '7d' });
             console.log('this is req.headers: ', req.headers);
 
             res.cookie('token', token, { secure: true })
 
             return res.status(201).send({
-              token: token,
-              message: "ok!"
+              token: token
             });
-           } else {
+          }
+        });
+      } else { res.status(400).send('email ou senha inválido') }
+    } catch (error) {
+      res.status(400).send(error);
+      console.log(error);
+    }
+  },
+
+  async UpdateToken(req, res) {
+    try {
+      const { user_CPF: cpf } = req.body;
+      console.log(cpf);
+
+      // Use o await para aguardar a consulta ao banco de dados
+      const [takeCPF] = await knex("user").where("user_CPF", "=", cpf);
+
+      if (takeCPF !== undefined) {
+        const token = JWT.sign({
+          user_CPF: takeCPF.user_CPF,
+          user_nome: takeCPF.user_nome,
+          user_email: takeCPF.user_email,
+          user_FotoPerfil: takeCPF.user_FotoPerfil,
+          user_nascimento: takeCPF.user_nascimento,
+          user_endCEP: takeCPF.user_endCEP,
+          user_endUF: takeCPF.user_endUF,
+          user_endbairro: takeCPF.user_endbairro,
+          user_endrua: takeCPF.user_endrua,
+          user_endnum: takeCPF.user_endnum,
+          user_endcomplemento: takeCPF.user_endcomplemento,
+          user_endcidade: takeCPF.user_endcidade,
+          user_tipo: takeCPF.user_tipo,
+          user_status: takeCPF.user_status,
+          user_credit: takeCPF.user_credit,
+          user_Background: takeCPF.user_Background,
+          user_cel: takeCPF.user_cel,
+          user_idcli: takeCPF.user_idcli
+
+        }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        console.log('this is req.headers: ', req.headers);
+
+        res.cookie('token', token, { secure: true })
+
+        return res.status(201).send({
+          token: token,
+          message: "ok!"
+        });
+      } else {
         res.status(400).send('CPF não encontrado');
       }
     } catch (error) {
@@ -268,268 +272,268 @@ async UserLogin(req, res) {
   },
 
 
-async DeleteUser (req, res) {
-  try {
+  async DeleteUser(req, res) {
+    try {
 
       const { user_CPF: data } = req.body;
 
       console.log('this is cookies 2: ', data);
       console.log('someone here??');
-            
+
       const result = await knex("user").where('user_CPF', '=', data).del();
       res.cookie('token', '', { expires: new Date(0), httpOnly: true, secure: true });
 
       res.status(201).json(result);
-  } catch (error) {
+    } catch (error) {
       console.log('error: ', error);
       return res.status(400).json({ error: error.message });
-  }
-},
+    }
+  },
 
-async UpdateUser(req, res) {
-  try {
-    const { user_CPF: cpf, updates } = req.body; // Recebe um objeto chamado "updates" contendo os campos a serem atualizados
+  async UpdateUser(req, res) {
+    try {
+      const { user_CPF: cpf, updates } = req.body; // Recebe um objeto chamado "updates" contendo os campos a serem atualizados
 
-    // Mapeamento dos campos do objeto "updates" para os campos do banco de dados
-    const paramToField = {
-      nome: 'user_nome',
-      email: 'user_email',
-      senha: 'user_senha',
-      cep: 'user_endCEP',
-      num: 'user_endnum',
-      uf: 'user_endUF',
-      bairro: 'user_endbairro',
-      rua: 'user_endrua',
-      complemento: 'user_endcomplemento',
-      cidade: 'user_endcidade',
-    };
+      // Mapeamento dos campos do objeto "updates" para os campos do banco de dados
+      const paramToField = {
+        nome: 'user_nome',
+        email: 'user_email',
+        senha: 'user_senha',
+        cep: 'user_endCEP',
+        num: 'user_endnum',
+        uf: 'user_endUF',
+        bairro: 'user_endbairro',
+        rua: 'user_endrua',
+        complemento: 'user_endcomplemento',
+        cidade: 'user_endcidade',
+      };
 
-     const updateFields = {};
-    let isSenhaUpdated = false; // Variável para indicar se o campo "senha" foi atualizado
+      const updateFields = {};
+      let isSenhaUpdated = false; // Variável para indicar se o campo "senha" foi atualizado
 
-    // Verifica cada campo fornecido no objeto "updates" e mapeia para o campo correspondente no banco de dados
-    for (const param in updates) {
-      if (paramToField.hasOwnProperty(param)) {
-        if (param === 'senha') {
-          console.log(updates);
-          console.log(param);
-          // Caso o campo seja "senha", faça o hash da senha antes de atualizá-la no banco de dados
-          const hashedPassword = await bcrypt.hash(updates[param], 10);
-          console.log(hashedPassword);
-          updateFields[paramToField[param]] = hashedPassword;
-          console.log(updateFields);
-          console.log(updateFields[paramToField[param]]);
-          isSenhaUpdated = true;
-        } else {
-          updateFields[paramToField[param]] = updates[param];
+      // Verifica cada campo fornecido no objeto "updates" e mapeia para o campo correspondente no banco de dados
+      for (const param in updates) {
+        if (paramToField.hasOwnProperty(param)) {
+          if (param === 'senha') {
+            console.log(updates);
+            console.log(param);
+            // Caso o campo seja "senha", faça o hash da senha antes de atualizá-la no banco de dados
+            const hashedPassword = await bcrypt.hash(updates[param], 10);
+            console.log(hashedPassword);
+            updateFields[paramToField[param]] = hashedPassword;
+            console.log(updateFields);
+            console.log(updateFields[paramToField[param]]);
+            isSenhaUpdated = true;
+          } else {
+            updateFields[paramToField[param]] = updates[param];
+          }
         }
       }
-    }
-            console.log(updates);
+      console.log(updates);
 
-    // Verifica se existem campos válidos para atualização
-    if (Object.keys(updateFields).length > 0) {
-      // Faça a atualização no banco de dados
-      await knex('user').where('user_CPF', '=', cpf).update(updateFields);
-      res.status(200).send('Atualização realizada com sucesso.');
-    } else {
-      res.status(400).send('Nenhum campo válido para atualização fornecido.');
-    }
+      // Verifica se existem campos válidos para atualização
+      if (Object.keys(updateFields).length > 0) {
+        // Faça a atualização no banco de dados
+        await knex('user').where('user_CPF', '=', cpf).update(updateFields);
+        res.status(200).send('Atualização realizada com sucesso.');
+      } else {
+        res.status(400).send('Nenhum campo válido para atualização fornecido.');
+      }
 
-     if (isSenhaUpdated) {
+      if (isSenhaUpdated) {
         res.status(200).send('Senha atualizada com sucesso.');
       } else {
-      res.status(400).send('Nenhum campo válido para atualização fornecido.');
+        res.status(400).send('Nenhum campo válido para atualização fornecido.');
       }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send('Erro interno do servidor.');
-  }
-},
-
-async uploadImage(req, res) {
-  try {
-    console.log('até aqui foi');
-
-    // Verificar se o cabeçalho 'Authorization' está presente
-    const token = req.headers['authorization'];
-const cpf = req.headers['user_cpf'];
-console.log(req.headers);
-    console.log(cpf);
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('Erro interno do servidor.');
     }
+  },
 
-    upload.single('selectedImage')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading image.' });
-      } else if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Unexpected error.' });
+  async uploadImage(req, res) {
+    try {
+      console.log('até aqui foi');
+
+      // Verificar se o cabeçalho 'Authorization' está presente
+      const token = req.headers['authorization'];
+      const cpf = req.headers['user_cpf'];
+      console.log(req.headers);
+      console.log(cpf);
+      if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
       }
+
+      upload.single('selectedImage')(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+          console.log(err);
+          return res.status(400).json({ error: 'Error uploading image.' });
+        } else if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'Unexpected error.' });
+        }
         console.log(req.file);
 
-      if (!req.file) {
-        console.log({ error: 'No image file provided.' });
-        return res.status(400).json({ error: 'No image file provided.' });
-      }
+        if (!req.file) {
+          console.log({ error: 'No image file provided.' });
+          return res.status(400).json({ error: 'No image file provided.' });
+        }
         console.log(req.file);
 
-      // Se chegou até aqui, o upload foi bem-sucedido.
-  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
-      console.log('foi');
-      try {
-        console.log(req.file);
+        // Se chegou até aqui, o upload foi bem-sucedido.
+        console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+        console.log('foi');
+        try {
+          console.log(req.file);
 
-        console.log(req.file.filename);
+          console.log(req.file.filename);
 
-      await knex('user').where('user_CPF', '=', cpf).update({
-          user_Background: req.file.filename, // Nome do arquivo gerado pelo multer
-        });
+          await knex('user').where('user_CPF', '=', cpf).update({
+            user_Background: req.file.filename, // Nome do arquivo gerado pelo multer
+          });
 
-        return res.json({ imageUrl: req.file.filename });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error uploading image.' });
+          return res.json({ imageUrl: req.file.filename });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: 'Error uploading image.' });
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error uploading image.' });
+    }
+  },
+
+  async uploadImagePerfil(req, res) {
+    try {
+      console.log('até aqui foi');
+
+      // Verificar se o cabeçalho 'Authorization' está presente
+      const token = req.headers['authorization'];
+      const cpf = req.headers['user_cpf'];
+      console.log(req.headers);
+      console.log(cpf);
+      if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
       }
+
+      upload2.single('selectedImage')(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+          console.log(err);
+          return res.status(400).json({ error: 'Error uploading image.' });
+        } else if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'Unexpected error.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+        if (!req.file) {
+          console.log({ error: 'No image file provided.' });
+          return res.status(400).json({ error: 'No image file provided.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+        // Se chegou até aqui, o upload foi bem-sucedido.
+        console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+        console.log('foi');
+        try {
+          console.log(req.file.filename);
+          console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+
+          await knex('user').where('user_CPF', '=', cpf).update({
+            user_FotoPerfil: req.file.filename, // Nome do arquivo gerado pelo multer
+          });
+
+          return res.json({ imageUrl: req.file.filename });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: 'Error uploading image.' });
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error uploading image.' });
+    }
+  },
+
+  async returnFundo(req, res) {
+    const { filename } = req.body;
+    console.log(filename);
+    const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'fundoperfil', filename);
+    console.log(imagePath);
+
+    // Ler a imagem como um buffer
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        console.error('Erro ao ler a imagem:', err);
+        return res.status(500).json({ error: 'Erro ao ler a imagem.' });
+      }
+
+      // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
+      res.setHeader('Content-Type', 'image/jpeg');
+
+      // Enviar o buffer da imagem na resposta
+      res.end(data);
     });
+  },
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Error uploading image.' });
-  }
-},
+  async returnPerfil(req, res) {
+    const { filename } = req.body;
+    console.log(filename);
 
-async uploadImagePerfil(req, res) {
-  try {
-    console.log('até aqui foi');
-
-    // Verificar se o cabeçalho 'Authorization' está presente
-    const token = req.headers['authorization'];
-const cpf = req.headers['user_cpf'];
-console.log(req.headers);
-    console.log(cpf);
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
+    if (!filename || typeof filename !== 'string') {
+      return res.status(400).json({ error: 'O campo "filename" é inválido ou está faltando.' });
     }
 
-    upload2.single('selectedImage')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading image.' });
-      } else if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Unexpected error.' });
+    const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'perfil', filename);
+    console.log(imagePath);
+
+    // Ler a imagem como um buffer
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        console.error('Erro ao ler a imagem:', err);
+        return res.status(500).json({ error: 'Erro ao ler a imagem.' });
       }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      if (!req.file) {
-        console.log({ error: 'No image file provided.' });
-        return res.status(400).json({ error: 'No image file provided.' });
-      }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+      // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
+      res.setHeader('Content-Type', 'image/jpeg');
 
-      // Se chegou até aqui, o upload foi bem-sucedido.
-  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
-      console.log('foi');
-      try {
-        console.log(req.file.filename);
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
-
-      await knex('user').where('user_CPF', '=', cpf).update({
-          user_FotoPerfil: req.file.filename, // Nome do arquivo gerado pelo multer
-        });
-
-        return res.json({ imageUrl: req.file.filename });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error uploading image.' });
-      }
+      // Enviar o buffer da imagem na resposta
+      res.end(data);
     });
+  },
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Error uploading image.' });
-  }
-},
+  async sendEmail(req, res) {
+    const { user_email: data } = req.body;
+    const { user_CPF: cpf } = req.body;
+    const { user_nome: nome } = req.body;
+    let token = ''
 
-async returnFundo(req, res) {
-  const { filename } = req.body;
-  console.log(filename);
-  const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'fundoperfil', filename);
-  console.log(imagePath);
-  
-  // Ler a imagem como um buffer
-  fs.readFile(imagePath, (err, data) => {
-    if (err) {
-      console.error('Erro ao ler a imagem:', err);
-      return res.status(500).json({ error: 'Erro ao ler a imagem.' });
-    }
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: process.env.email,
+          pass: process.env.senhaemail,
+          clientId: process.env.idclient,
+          clientSecret: process.env.secretkey,
+          refreshToken: process.env.refreshtoken
+        }
+      });
 
-    // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
-    res.setHeader('Content-Type', 'image/jpeg');
-    
-    // Enviar o buffer da imagem na resposta
-    res.end(data);
-  });
-},
-
-async returnPerfil(req, res) {
-  const { filename } = req.body;
-  console.log(filename);
-
-   if (!filename || typeof filename !== 'string') {
-    return res.status(400).json({ error: 'O campo "filename" é inválido ou está faltando.' });
-  }
-
-  const imagePath = path.resolve(__dirname, '..', '..', '..', 'user', 'perfil', filename);
-  console.log(imagePath);
-  
-  // Ler a imagem como um buffer
-  fs.readFile(imagePath, (err, data) => {
-    if (err) {
-      console.error('Erro ao ler a imagem:', err);
-      return res.status(500).json({ error: 'Erro ao ler a imagem.' });
-    }
-
-    // Definir o cabeçalho "Content-Type" corretamente para uma imagem JPG
-    res.setHeader('Content-Type', 'image/jpeg');
-    
-    // Enviar o buffer da imagem na resposta
-    res.end(data);
-  });
-},
-
-async sendEmail(req, res) {
-  const { user_email: data } = req.body;
-  const { user_CPF: cpf } = req.body;
-  const { user_nome: nome } = req.body;
-  let token = ''
-
-  try {
-   const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: process.env.email,
-        pass: process.env.senhaemail,
-        clientId: process.env.idclient,
-        clientSecret: process.env.secretkey,
-        refreshToken: process.env.refreshtoken
+      function formatarCPF(cpf) {
+        const cpfSemDigitos = cpf.slice(0, -3);
+        return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
       }
-    });
-
-    function formatarCPF(cpf) {
-      const cpfSemDigitos = cpf.slice(0, -3);
-      return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
-    }
 
       token = generateToken();
       const timestamp = moment().unix();
       tokens.set(token, timestamp);
 
-    const emailBody = `
+      const emailBody = `
    <!DOCTYPE html>
 <html>
 <head>
@@ -605,70 +609,70 @@ async sendEmail(req, res) {
 </body>
 </html>
   `;
-        const mailOptions = {
-          from: process.env.email,
-          to: data,
-          subject: 'Alteração de email: EasyPass',
-          html: emailBody
-        };
-        console.log(mailOptions);
+      const mailOptions = {
+        from: process.env.email,
+        to: data,
+        subject: 'Alteração de email: EasyPass',
+        html: emailBody
+      };
+      console.log(mailOptions);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error('Erro no envio do Email:', error);
-        res.status(400).send('Erro no envio do Email.');
-      } else {
-        console.log(info);
-        console.log('Email enviado com sucesso para:', data);
-        res.status(200).send('Email enviado com sucesso ao: ' + data);
-      }
-    });
-  } catch (error) {
-    console.error('Erro na requisição de envio do Email:', error);
-    res.status(400).send('Erro na requisição de envio do Email.');
-  }
-},
-
-async sendSenha(req, res) {
-  const { user_CPF: cpf } = req.body;
-  let uniqueCode = ''
-
-  const userGet = await knex('user').where('user_CPF', '=', cpf).first();
-  console.log(userGet);
-  let data  = userGet.user_email;
-  let nome  = userGet.user_nome;
-  
-
-  console.log(data, nome, cpf);
-
-  try {
-   const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: process.env.email,
-        pass: process.env.senhaemail,
-        clientId: process.env.idclient,
-        clientSecret: process.env.secretkey,
-        refreshToken: process.env.refreshtoken
-      }
-    });
-
-    function formatarCPF(cpf) {
-      const cpfSemDigitos = cpf.slice(0, -3);
-      return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.error('Erro no envio do Email:', error);
+          res.status(400).send('Erro no envio do Email.');
+        } else {
+          console.log(info);
+          console.log('Email enviado com sucesso para:', data);
+          res.status(200).send('Email enviado com sucesso ao: ' + data);
+        }
+      });
+    } catch (error) {
+      console.error('Erro na requisição de envio do Email:', error);
+      res.status(400).send('Erro na requisição de envio do Email.');
     }
+  },
 
-    function generateUnique6DigitCode() {
-  const randomBytes = crypto.randomBytes(3); // Generate 3 random bytes
-  const uniqueCode = randomBytes.toString('hex').slice(0, 6).toUpperCase();
-  return uniqueCode;
-}
-    const uniqueCode = generateUnique6DigitCode();
-    const timestamp = moment().unix();
-    codes.set(uniqueCode, timestamp);
+  async sendSenha(req, res) {
+    const { user_CPF: cpf } = req.body;
+    let uniqueCode = ''
 
-   const senhaBody = `
+    const userGet = await knex('user').where('user_CPF', '=', cpf).first();
+    console.log(userGet);
+    let data = userGet.user_email;
+    let nome = userGet.user_nome;
+
+
+    console.log(data, nome, cpf);
+
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: process.env.email,
+          pass: process.env.senhaemail,
+          clientId: process.env.idclient,
+          clientSecret: process.env.secretkey,
+          refreshToken: process.env.refreshtoken
+        }
+      });
+
+      function formatarCPF(cpf) {
+        const cpfSemDigitos = cpf.slice(0, -3);
+        return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+      }
+
+      function generateUnique6DigitCode() {
+        const randomBytes = crypto.randomBytes(3); // Generate 3 random bytes
+        const uniqueCode = randomBytes.toString('hex').slice(0, 6).toUpperCase();
+        return uniqueCode;
+      }
+      const uniqueCode = generateUnique6DigitCode();
+      const timestamp = moment().unix();
+      codes.set(uniqueCode, timestamp);
+
+      const senhaBody = `
    <!DOCTYPE html>
 <html>
 <head>
@@ -771,236 +775,236 @@ async sendSenha(req, res) {
   `;
 
       const mailOptions = {
-          from: process.env.email,
-          to: data,
-          subject: 'Recuperação de senha: EasyPass',
-          html: senhaBody
-        };
-        
-        console.log(mailOptions);
+        from: process.env.email,
+        to: data,
+        subject: 'Recuperação de senha: EasyPass',
+        html: senhaBody
+      };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error('Erro no envio do Email:', error);
-        res.status(400).send('Erro no envio do Email.');
-      } else {
-        console.log(info);
-        console.log('Email enviado com sucesso para:', data);
-        res.status(200).send('Email enviado com sucesso ao: ' + data);
-      }
-    });
-  } catch (error) {
-    console.error('Erro na requisição de envio do Email:', error);
-    res.status(400).send('Erro na requisição de envio do Email.');
-  }
-},
+      console.log(mailOptions);
 
-
-    async validateToken(req, res) {
-      const { token } = req.body;
-
-      if (tokens.has(token)) {
-        const timestamp = tokens.get(token);
-
-        const currentTime = moment().unix();
-        const timeDifference = currentTime - timestamp;
-
-        const expirationTime = 15 * 60;
-
-        if (timeDifference <= expirationTime) {
-
-          res.status(200).json({ valid: true });
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.error('Erro no envio do Email:', error);
+          res.status(400).send('Erro no envio do Email.');
         } else {
-
-          tokens.delete(token); 
-          res.status(200).json({ valid: false });
+          console.log(info);
+          console.log('Email enviado com sucesso para:', data);
+          res.status(200).send('Email enviado com sucesso ao: ' + data);
         }
+      });
+    } catch (error) {
+      console.error('Erro na requisição de envio do Email:', error);
+      res.status(400).send('Erro na requisição de envio do Email.');
+    }
+  },
+
+
+  async validateToken(req, res) {
+    const { token } = req.body;
+
+    if (tokens.has(token)) {
+      const timestamp = tokens.get(token);
+
+      const currentTime = moment().unix();
+      const timeDifference = currentTime - timestamp;
+
+      const expirationTime = 15 * 60;
+
+      if (timeDifference <= expirationTime) {
+
+        res.status(200).json({ valid: true });
       } else {
 
+        tokens.delete(token);
         res.status(200).json({ valid: false });
       }
-    },
+    } else {
 
-       async validadeCode(req, res) {
-      const { code } = req.body;
+      res.status(200).json({ valid: false });
+    }
+  },
 
-      if (codes.has(code)) {
-        const timestamp = codes.get(code);
+  async validadeCode(req, res) {
+    const { code } = req.body;
 
-        const currentTime = moment().unix();
-        const timeDifference = currentTime - timestamp;
+    if (codes.has(code)) {
+      const timestamp = codes.get(code);
 
-        const expirationTime = 15 * 60;
+      const currentTime = moment().unix();
+      const timeDifference = currentTime - timestamp;
 
-        if (timeDifference <= expirationTime) {
+      const expirationTime = 15 * 60;
 
-          res.status(200).json({ valid: true });
-        } else {
+      if (timeDifference <= expirationTime) {
 
-          codes.delete(code); 
-          res.status(200).json({ valid: false });
-        }
+        res.status(200).json({ valid: true });
       } else {
 
+        codes.delete(code);
         res.status(200).json({ valid: false });
       }
-    },
+    } else {
 
-    async uploadDocumentosRG(req, res) {
-  try {
-    console.log('até aqui foi');
-
-    const token = req.headers['authorization'];
-const cpf = req.headers['user_cpf'];
-console.log(req.headers);
-    console.log(cpf);
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
+      res.status(200).json({ valid: false });
     }
+  },
 
-    upload3.single('selectedImage')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading image.' });
-      } else if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Unexpected error.' });
+  async uploadDocumentosRG(req, res) {
+    try {
+      console.log('até aqui foi');
+
+      const token = req.headers['authorization'];
+      const cpf = req.headers['user_cpf'];
+      console.log(req.headers);
+      console.log(cpf);
+      if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
       }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      if (!req.file) {
-        console.log({ error: 'No image file provided.' });
-        return res.status(400).json({ error: 'No image file provided.' });
-      }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+      upload3.single('selectedImage')(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+          console.log(err);
+          return res.status(400).json({ error: 'Error uploading image.' });
+        } else if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'Unexpected error.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      // Se chegou até aqui, o upload foi bem-sucedido.
-  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
-      console.log('foi');
-      try {
-        console.log(req.file.filename);
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+        if (!req.file) {
+          console.log({ error: 'No image file provided.' });
+          return res.status(400).json({ error: 'No image file provided.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      await knex('user').where('user_CPF', '=', cpf).update({
-          user_RGFrente: req.file.filename, // Nome do arquivo gerado pelo multer
-        });
+        // Se chegou até aqui, o upload foi bem-sucedido.
+        console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+        console.log('foi');
+        try {
+          console.log(req.file.filename);
+          console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-        return res.json({ imageUrl: req.file.filename });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error uploading image.' });
-      }
-    });
+          await knex('user').where('user_CPF', '=', cpf).update({
+            user_RGFrente: req.file.filename, // Nome do arquivo gerado pelo multer
+          });
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Error uploading image.' });
-  }
-},
+          return res.json({ imageUrl: req.file.filename });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: 'Error uploading image.' });
+        }
+      });
 
-    async uploadDocumentosRGtras(req, res) {
-  try {
-    console.log('até aqui foi');
-
-    const token = req.headers['authorization'];
-const cpf = req.headers['user_cpf'];
-console.log(req.headers);
-    console.log(cpf);
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error uploading image.' });
     }
+  },
 
-    upload5.single('selectedImage')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading image.' });
-      } else if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Unexpected error.' });
+  async uploadDocumentosRGtras(req, res) {
+    try {
+      console.log('até aqui foi');
+
+      const token = req.headers['authorization'];
+      const cpf = req.headers['user_cpf'];
+      console.log(req.headers);
+      console.log(cpf);
+      if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
       }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      if (!req.file) {
-        console.log({ error: 'No image file provided.' });
-        return res.status(400).json({ error: 'No image file provided.' });
-      }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+      upload5.single('selectedImage')(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+          console.log(err);
+          return res.status(400).json({ error: 'Error uploading image.' });
+        } else if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'Unexpected error.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      // Se chegou até aqui, o upload foi bem-sucedido.
-  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
-      console.log('foi');
-      try {
-        console.log(req.file.filename);
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+        if (!req.file) {
+          console.log({ error: 'No image file provided.' });
+          return res.status(400).json({ error: 'No image file provided.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      await knex('user').where('user_CPF', '=', cpf).update({
-          user_RGTras: req.file.filename, // Nome do arquivo gerado pelo multer
-        });
+        // Se chegou até aqui, o upload foi bem-sucedido.
+        console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+        console.log('foi');
+        try {
+          console.log(req.file.filename);
+          console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-        return res.json({ imageUrl: req.file.filename });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error uploading image.' });
-      }
-    });
+          await knex('user').where('user_CPF', '=', cpf).update({
+            user_RGTras: req.file.filename, // Nome do arquivo gerado pelo multer
+          });
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Error uploading image.' });
-  }
-},
+          return res.json({ imageUrl: req.file.filename });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: 'Error uploading image.' });
+        }
+      });
 
-    async uploadDocumentosfacial(req, res) {
-  try {
-    console.log('até aqui foi');
-
-    const token = req.headers['authorization'];
-const cpf = req.headers['user_cpf'];
-console.log(req.headers);
-    console.log(cpf);
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error uploading image.' });
     }
+  },
 
-    upload4.single('selectedImage')(req, res, async function (err) {
-      if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(400).json({ error: 'Error uploading image.' });
-      } else if (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Unexpected error.' });
+  async uploadDocumentosfacial(req, res) {
+    try {
+      console.log('até aqui foi');
+
+      const token = req.headers['authorization'];
+      const cpf = req.headers['user_cpf'];
+      console.log(req.headers);
+      console.log(cpf);
+      if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
       }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      if (!req.file) {
-        console.log({ error: 'No image file provided.' });
-        return res.status(400).json({ error: 'No image file provided.' });
-      }
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+      upload4.single('selectedImage')(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+          console.log(err);
+          return res.status(400).json({ error: 'Error uploading image.' });
+        } else if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'Unexpected error.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      // Se chegou até aqui, o upload foi bem-sucedido.
-  console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
-      console.log('foi');
-      try {
-        console.log(req.file.filename);
-      console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
+        if (!req.file) {
+          console.log({ error: 'No image file provided.' });
+          return res.status(400).json({ error: 'No image file provided.' });
+        }
+        console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-      await knex('user').where('user_CPF', '=', cpf).update({
-          user_FotoRec: req.file.filename, // Nome do arquivo gerado pelo multer
-        });
+        // Se chegou até aqui, o upload foi bem-sucedido.
+        console.log('Arquivo recebido:', req.file); // Adicione este log para verificar o arquivo recebido
+        console.log('foi');
+        try {
+          console.log(req.file.filename);
+          console.log(req.file); // Adicione este log para verificar se req.file está sendo recebido
 
-        return res.json({ imageUrl: req.file.filename });
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error uploading image.' });
-      }
-    });
+          await knex('user').where('user_CPF', '=', cpf).update({
+            user_FotoRec: req.file.filename, // Nome do arquivo gerado pelo multer
+          });
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Error uploading image.' });
-  }
-},
+          return res.json({ imageUrl: req.file.filename });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({ error: 'Error uploading image.' });
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: 'Error uploading image.' });
+    }
+  },
 
 
 
