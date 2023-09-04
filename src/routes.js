@@ -18,14 +18,15 @@ const controllerMessage = require('./controllers/sac_message/index')
 const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
+const controllerAdm = require('./controllers/admin/index')
 
 const middleware = require('./controllers/Middleware');
 
 const routes = express.Router();
+const path = require('path');
+const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const dotenv = require('dotenv');
-dotenv.config();
-
+console.log('this is dotenv: ', process.env.port);
 routes.use(cookie());
 routes.use(cors());
 
@@ -51,6 +52,7 @@ routes.delete('/listcpf/:CNPJ', controllerListCPF.listcpfDelete);
 routes.get('/listcpf', controllerListCPF.searchListCpf);
 routes.post('/listcpf/search', controllerListCPF.searchCpf);
 
+routes.post('/admlogin', controllerAdm.Admlogin);
 
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);

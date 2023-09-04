@@ -26,7 +26,9 @@ module.exports = {
 
     async searchBussines(req, res) {
         try {
+           
             const result = await knex("bussines");
+            console.log('this is bussines', result);
             res.status(201).json(result);
         } catch (error) {
             return res.status(400).json({ error: error.message });
