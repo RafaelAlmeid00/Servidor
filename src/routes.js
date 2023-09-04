@@ -24,8 +24,7 @@ const routes = express.Router();
 
 const dotenv = require('dotenv');
 dotenv.config();
- 
-console.log('this is userdb aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ', process.env.JWT_SECRET);
+
 routes.use(cookie());
 routes.use(cors());
 
