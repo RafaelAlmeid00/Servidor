@@ -19,7 +19,6 @@ const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
 const controllerAdm = require('./controllers/admin/index')
-const controllerSocket = require('./controllers/socket/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -113,6 +112,5 @@ routes.get('/cliente/search', controllerAsaas.searchCustomer);
 routes.post('/pagamento', controllerAsaas.createPay);
 routes.post('/pagamento/verify', controllerAsaas.verifyPay);
 
-routes.get('/activeUsers', controllerSocket.getActiveUsers);
 
 module.exports = routes;
