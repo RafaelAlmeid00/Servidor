@@ -6,6 +6,48 @@ const knex = require('../../database/index')
 const listaPagamentos = [];
 
 module.exports = {
+  async searchPayments(req, res) {
+    const idcli = req.body.params.idcli;
+    const query = req.body.params.tipo;
+    let url
+
+    console.log(req.headers['authorization'])
+    console.log(req.body)
+    console.log(idcli)
+    console.log(query)
+
+    if (!idcli) {
+      return res.status(400).json({ message: 'ID do cliente ausente ou inválido' });
+    }
+
+    if (query == 'todos') {
+      url = `https://api.asaas.com/v3/payments?customers=${idcli}&limit=100`;
+    } else {
+      url = `https://api.asaas.com/v3/payments?status=${query}&limit=100`;
+    }
+
+    console.log(url);
+
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        access_token: token
+      }
+    };
+
+    try {
+
+      const response = await fetch(url, options);
+      const pays = await response.json();
+      res.status(200).json({ message: 'Pagamentos pego com sucesso', Pagamentos: pays });
+    } catch (error) {
+      console.log(error);
+      console.error('Erro ao pegar pagamentos:', error);
+      res.status(500).json({ message: 'Erro ao pegar pagamentos' });
+    }
+  },
+
   async createCustomer(req, res) {
     const { cliente } = req.body;
     console.log(cliente);
@@ -90,8 +132,9 @@ module.exports = {
         id: payment.id,
         status: payment.status,
         value: payment.value,
-        dataCriacao: new Date(payment.dataCriacao) // Store creation date as a Date object
+        dataCriacao: new Date(payment.dateCreated)
       });
+      console.log(listaPagamentos);
       res.status(200).json({ message: 'Pagamento criado com sucesso', pagamento: payment });
     } catch (error) {
       console.error('Erro ao criar pagamento:', error);
@@ -107,6 +150,8 @@ module.exports = {
     console.log(req.body)
     console.log(idcli)
     console.log(dataCard)
+    console.log(listaPagamentos);
+
     if (!idcli) {
       console.log('ID do cliente ausente ou inválido');
       return res.status(400).send({ message: 'ID do cliente ausente ou inválido' });

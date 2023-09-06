@@ -2,6 +2,9 @@
 const express = require('express');
 const cookie = require('cookie-parser');
 const cors = require('cors'); // Importe o cors
+const routes = express.Router();
+const path = require('path');
+
 
 //controllers
 const controllersUser = require('./controllers/user/index');
@@ -19,16 +22,13 @@ const controllerCardEnvio = require('./controllers/card/index')
 const controllerValidation = require('./controllers/validation_card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
 const controllerAdm = require('./controllers/admin/index')
+const controllerUseCard = require('./controllers/use_card/index')
 
 const middleware = require('./controllers/Middleware');
 
-const routes = express.Router();
-const path = require('path');
-const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') });
-
-console.log('this is dotenv: ', process.env.port);
 routes.use(cookie());
 routes.use(cors());
+
 
 routes.post('/cliente', controllerAsaas.createCustomer);
 
@@ -111,6 +111,8 @@ routes.delete('/validation', controllerValidation.deleteVal);
 routes.get('/cliente/search', controllerAsaas.searchCustomer);
 routes.post('/pagamento', controllerAsaas.createPay);
 routes.post('/pagamento/verify', controllerAsaas.verifyPay);
+routes.post('/pagamento/search', controllerAsaas.searchPayments);
 
+routes.post('/usos', controllerUseCard.useCard);
 
 module.exports = routes;

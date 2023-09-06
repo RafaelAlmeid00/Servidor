@@ -4,8 +4,16 @@ dotenv.config();
 
 module.exports = {
   async mid(req, res, next) {
-    const {token: token} = req.body
-    const authheader = req.headers['authorization']
+    let token
+    let authheader
+
+    console.log(req);
+    console.log(authheader);
+    if (req.headers['authorization']) {
+      authheader = req.headers['authorization']
+    } else {
+      token = req.body.token
+    }
     console.log('Middleware called');
     const test = process.env.JWT_SECRET;
     console.log(token);
