@@ -13,6 +13,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const middleware = require('./controllers/Middleware');
+const uniqid = require('uniqid');
 
 app.use(cors({
   credentials: true,
@@ -45,7 +46,6 @@ const servidor = server.listen(process.env.PORT || 3344, () => {
   console.log("Server is running on port 3344");
 });
 
-
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 
@@ -75,18 +75,25 @@ io.use((socket, next) => {
     }
     next();
   });
-}); +
+}); 
 
   io.on('connection', async (socket) => {
     console.log('Um cliente se conectou ao Socket.io');
-    socket.emit("message", "Funfa");
+
     const token = socket.handshake.auth.token;
     console.log(token);
 
-    socket.on("userDetails", async (data) => {
+      socket.on("userDetails", async (data) => {
+        console.log(data);
+        controllersSocket.searchUserCPF(socket, data)
+      })
+    
+
+    socket.on("cardDetails", async (data) => {
       console.log(data);
-      controllersSocket.searchUserCPF(socket, data)
+      controllersSocket.searchCardAtivo(socket, data)
     })
+
   });
 
 

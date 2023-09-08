@@ -7,8 +7,6 @@ module.exports = {
     let token
     let authheader
 
-    console.log(req);
-    console.log(authheader);
     if (req.headers['authorization']) {
       authheader = req.headers['authorization']
     } else {

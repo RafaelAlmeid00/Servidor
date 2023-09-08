@@ -58,8 +58,6 @@ function generateToken() {
 let tokens = new Map();
 let codes = new Map();
 
-console.log(storage2, upload2);
-
 const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();

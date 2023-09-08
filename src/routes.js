@@ -19,7 +19,6 @@ const controllerTurn = require('./controllers/turn_bus/index');
 const controllerDriver = require('./controllers/driver_bus/index');
 const controllerMessage = require('./controllers/sac_message/index')
 const controllerCardEnvio = require('./controllers/card/index')
-const controllerValidation = require('./controllers/validation_card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
 const controllerAdm = require('./controllers/admin/index')
 const controllerUseCard = require('./controllers/use_card/index')
@@ -104,9 +103,6 @@ routes.get('/sac', controllersSac.Search);
 
 routes.post('/message', controllerMessage.CadMessage);
 routes.get('/message', controllerMessage.SearchMessage)
-
-routes.post('/validation', controllerValidation.searchVal);
-routes.delete('/validation', controllerValidation.deleteVal);
 
 routes.get('/cliente/search', controllerAsaas.searchCustomer);
 routes.post('/pagamento', controllerAsaas.createPay);

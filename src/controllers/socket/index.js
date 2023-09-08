@@ -13,9 +13,27 @@ module.exports = {
     socket.emit("userDetails", takeCPF)
     console.log(takeCPF);
   } catch (error) {
-        socket.emit("userDetails", error)
-        console.log(error);
+      socket.emit("userDetails", error)
+        console.log(error.message);
   }
 },
+
+  async searchCardAtivo(socket, data) {
+    try {
+      const requestCards = await knex("request_card").where("user_user_CPF", "=", data);
+      const reqIds = requestCards.map(card => card.req_id);
+      const activeCards = await knex("card").whereIn("request_card_req_id", reqIds).where("card_status", "=", "ativo");
+
+      console.log(requestCards);
+      console.log(reqIds);
+
+      socket.emit("cardDetails", activeCards)
+      console.log(activeCards);
+
+    } catch (error) {
+      socket.emit("cardDetails", error)
+      console.log(error.message);
+    }
+  },
 
 }
