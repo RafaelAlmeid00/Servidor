@@ -2,9 +2,11 @@ const knex = require("../../database/index");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path')
-const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') });
+const dotenv = require('dotenv');
+
 module.exports = {
     async Admlogin(req, res) {
+        dotenv.config()
         console.log('this is dotenv: ', dotenv);
         const {email: email} = req.body;
         const {password: password} = req.body;
@@ -22,10 +24,13 @@ module.exports = {
                 console.log('this is call: ', call);
                 var token = jwt.sign({
                     Name: Email.adm_nome,
-                    Email: Email.adm_email
+                    Email: Email.adm_email,
+                    adm_level: Email.adm_level
                 }, process.env.JWT_SECRET, { expiresIn: '7d' });
                 res.status(201).json({token: token});}
             })
+        }else{
+            res.status(401).send('senha ou email errado')
         }
 
     }
