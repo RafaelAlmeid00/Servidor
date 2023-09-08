@@ -318,8 +318,9 @@ module.exports = {
           if (err || comp == false) {
             console.log('comp: ', comp);
             console.log('this is err: ', err);
-            return res.status(201).send({
-              error: 'error'
+            return res.status(400).send({
+              error: 'error',
+              comp
             });
           } else {
             console.log('this is comp: ', comp);
