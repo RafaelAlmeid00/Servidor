@@ -18,7 +18,7 @@ module.exports = {
       }
 
       const ids = cards.map(card => card.card_id);
-      const validations = await knex("validation_card").whereIn("card_card_id", ids);
+      const validations = await knex("validation_card").whereIn("card_card_id", ids).orderBy("val_horario", "desc");
       if (!validations || validations.length === 0) {
         return res.status(400).json({ error: 'Sem validações' });
       }
@@ -67,9 +67,20 @@ module.exports = {
         };
       });
 
-      console.log(validationsWithInfo);
+      const sortedValidationsWithInfo = validationsWithInfo.sort((a, b) => {
+        // Converta as datas de string de volta para objetos Date
+        const dateA = new Date(a.val_data);
+        const dateB = new Date(b.val_data);
 
-      return res.status(200).json(validationsWithInfo);
+        // Compare as datas para classificar em ordem decrescente (mais recente para mais antigo)
+        return dateB - dateA;
+      });
+      
+
+      console.log(validationsWithInfo);
+      console.log(sortedValidationsWithInfo);
+
+      return res.status(200).json(sortedValidationsWithInfo);
     } catch (error) {
       return res.status(400).json({ error: error.message });
     }
