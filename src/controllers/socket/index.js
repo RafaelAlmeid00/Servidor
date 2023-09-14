@@ -4,6 +4,7 @@ module.exports = {
     async searchUserCPF(socket, data) {
   
   try {
+    console.log('this is socket: ', socket);
     const takeCPF = await knex("user").where("user_CPF", "=", data).first();
 
     if (!takeCPF) {
@@ -36,4 +37,13 @@ module.exports = {
     }
   },
 
+  async messageToadm(socket, data) {
+    try {
+      console.log('this is aaaaaaaaaaaaaaaaaaaaaaaa');
+      const bigcry = 'tão natural quanto a luz do dia'
+      socket.emit("userMensage", bigcry)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

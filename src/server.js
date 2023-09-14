@@ -84,17 +84,23 @@ io.use((socket, next) => {
     console.log(token);
 
       socket.on("userDetails", async (data) => {
-        console.log(data);
+        console.log('fvjdfnjdfv', data);
         controllersSocket.searchUserCPF(socket, data)
       })
     
 
     socket.on("cardDetails", async (data) => {
-      console.log(data);
+      console.log('fvjdfnjdfv',data);
       controllersSocket.searchCardAtivo(socket, data)
     })
 
+    socket.on("userMensage", async (data) => {
+      console.log(socket.id);
+      controllersSocket.messageToadm(socket, data)
+    })
+
+    socket.on("ping", (callback) => {
+    callback();
   });
 
-
-
+  });
