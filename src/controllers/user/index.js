@@ -133,34 +133,29 @@ module.exports = {
 
       console.log('teste rapidão: ', cpf);
 
-      const senha = await bcrypt.hash(password, 10);
-      console.log('aaabbb');
+            const senha = await bcrypt.hash(password, 10);
 
-      await knex("user").insert({
-        user_CPF: cpf,
-        user_RG: rg,
-        user_nome: name,
-        user_email: email,
-        user_senha: senha,
-        user_nascimento: date,
-        user_endCEP: cep,
-        user_endUF: UF,
-        user_endbairro: district,
-        user_endrua: street,
-        user_endnum: num,
-        user_endcomplemento: comp,
-        user_endcidade: city,
-        user_tipo: type,
-        list_CPF_list_id: id,
-        user_cel: cel,
-        user_idcli: idcli
-      });
-      console.log('aaa');
+            await knex("user").insert({
+                user_CPF: cpf,
+                user_RG: rg,
+                user_nome: name,
+                user_email: email,
+                user_senha: senha,
+                user_nascimento: date,
+                user_endCEP: cep,
+                user_endUF: UF,
+                user_endbairro: district,
+                user_endrua: street,
+                user_endnum: num,
+                user_endcomplemento: comp,
+                user_endcidade: city,
+                user_tipo: type,
+                list_CPF_list_id: id
+            });
 
       return res.status(201).send("User registered");
     } catch (error) {
-      console.log(error);
-      return res.status(400).send({ error: error.message, error });
+        return res.status(400).send({ error: error.message });
     }
   },
 

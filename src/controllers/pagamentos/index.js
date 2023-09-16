@@ -48,34 +48,6 @@ module.exports = {
     }
   },
 
-  async createCustomer(req, res) {
-    const { cliente } = req.body;
-    console.log(cliente);
-    console.log(JSON.stringify(cliente));
-
-    const url = 'https://api.asaas.com/v3/customers';
-    const options = {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        access_token: token
-      },
-      body: JSON.stringify(cliente) // Envia o objeto cliente como JSON no corpo da solicitação
-    };
-
-    try {
-      const response = await fetch(url, options);
-      const customer = await response.json();
-      console.log('Cliente criado:', customer);
-      console.log(customer.id);
-      res.status(200).json({ message: 'Cliente criado com sucesso', cliente: customer, idcli: customer.id });
-    } catch (error) {
-      console.error('Erro ao criar cliente:', error);
-      res.status(500).json({ message: 'Erro ao criar cliente' });
-    }
-  },
-
   async searchCustomer(req, res) {
     const idcli = req.query.idcli;
 
@@ -110,7 +82,6 @@ module.exports = {
     console.log(pagamento);
     console.log(JSON.stringify(pagamento));
 
-    // Add the creation date to the payment object
     pagamento.dataCriacao = new Date();
 
     const url = 'https://api.asaas.com/v3/payments';
@@ -141,7 +112,6 @@ module.exports = {
       res.status(500).json({ message: 'Erro ao criar pagamento' });
     }
   },
-
 
   async verifyPay(req, res) {
     const idcli = req.body.params.idcli;
