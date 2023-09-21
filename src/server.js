@@ -42,10 +42,9 @@ app.use(session({
 app.use(express.json());
 app.use(routes);
 
-const servidor = server.listen(process.env.PORT || 3344, () => {
-  console.log("Server is running on port 3344");
+const servidor = server.listen(3345, () => {
+  console.log("Server is running on port 3345");
 });
-
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 
@@ -60,7 +59,6 @@ const io = new Server(servidor, {
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
-
   if (!token) {
     return next(new Error("Token não fornecido"));
   }
@@ -76,17 +74,16 @@ io.use((socket, next) => {
     next();
   });
 }); 
-
   io.on('connection', async (socket) => {
     console.log('Um cliente se conectou ao Socket.io');
-
+    
     const token = socket.handshake.auth.token;
     console.log(token);
 
-      socket.on("userDetails", async (data) => {
-        console.log('fvjdfnjdfv', data);
-        controllersSocket.searchUserCPF(socket, data)
-      })
+    socket.on("userDetails", async (data) => {
+      console.log('fvjdfnjdfv', data);
+      controllersSocket.searchUserCPF(socket, data)
+    })
     
 
     socket.on("cardDetails", async (data) => {
@@ -95,12 +92,18 @@ io.use((socket, next) => {
     })
 
     socket.on("userMensage", async (data) => {
-      console.log(socket.id);
+      console.log('olá, funfou');
+   
       controllersSocket.messageToadm(socket, data)
     })
-
+    socket.on("connect", (data) => {
+      console.log('olá, funfou');
+    });
     socket.on("ping", (callback) => {
-    callback();
-  });
+      callback();
+    });
 
   });
+
+  
+app.listen(3344)

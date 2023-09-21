@@ -43,7 +43,7 @@ module.exports = {
       const bigcry = 'tão natural quanto a luz do dia'
       socket.emit("userMensage", bigcry)
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   }
 }

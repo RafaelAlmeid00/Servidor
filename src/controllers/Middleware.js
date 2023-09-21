@@ -14,7 +14,7 @@ module.exports = {
     }
     console.log('Middleware called');
     const test = process.env.JWT_SECRET;
-    console.log(token);
+    console.log('token: ', token);
     console.log(authheader);
 
     if (token || authheader) {
