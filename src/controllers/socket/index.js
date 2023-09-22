@@ -47,21 +47,39 @@ module.exports = {
 
       //YYYY-MM-DD
       var currentdate = new Date();
-      const {verify} = await knex('sac').where('user_user_CPF', '=', data);
-      console.log(verify);
-      if (verify.user_user_CPF != null) {
-        await knex('sac_message').where('sac_ticket', '=', verify.sac_ticket)
+      console.log('time: ', currentdate);
+      const [verify] = await knex('sac').where('user_user_CPF', '=', data);
+      console.log('this is verify: ', verify);
+      if (verify) {
+
+        const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+
+        console.log('this is idmen: ', idmen);
+        
+        var lastId = idmen.length - 1;
+        const NewId = idmen[lastId].sacmen_id + 1;
+        
+        console.log('this is id and last: ', NewId, lastId);
+        console.log('this is user_user_cpf: ', verify.user_user_CPF);
+        await knex('sac_message').insert({
+          sac_sac_ticket: verify.sac_ticket,
+          user_user_CPF: verify.user_user_CPF,
+          sac_data: currentdate,
+          sacmen_texto: mensage,
+          sacmen_id: NewId
+        })
+        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc')
+        socket.emit("userMensage", reload);
       }else{
 
       const {sac} = await knex('sac').insert({
         sac_ticket: income,
-        sac_data: currentdate,
         user_user_CPF: data
+
       })
 
       await knex('sac_message').insert({
         sac_ticket: sac.sac_ticket,
-        
         user_user_cpf: data})
 
       }
@@ -70,5 +88,11 @@ module.exports = {
     } catch (error) {
       console.log(error.message);
     }
+  },
+
+  async ConstantEmit(){
+
+
   }
+
 }
