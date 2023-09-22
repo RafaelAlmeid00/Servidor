@@ -37,11 +37,36 @@ module.exports = {
     }
   },
 
-  async messageToadm(socket, data) {
+  async messageToadm(socket, mensage, data) {
     try {
-      console.log('this is aaaaaaaaaaaaaaaaaaaaaaaa');
-      const bigcry = 'tão natural quanto a luz do dia'
-      socket.emit("userMensage", bigcry)
+      console.log('this is dataaaaaaaaaaaaaaaaaaaaaaa: ', data);
+      const idgenerated = require('uniqid');
+      
+      const income = idgenerated.time();
+      console.log('thi is income: ', income);
+
+      //YYYY-MM-DD
+      var currentdate = new Date();
+      const {verify} = await knex('sac').where('user_user_CPF', '=', data);
+      console.log(verify);
+      if (verify.user_user_CPF != null) {
+        await knex('sac_message').where('sac_ticket', '=', verify.sac_ticket)
+      }else{
+
+      const {sac} = await knex('sac').insert({
+        sac_ticket: income,
+        sac_data: currentdate,
+        user_user_CPF: data
+      })
+
+      await knex('sac_message').insert({
+        sac_ticket: sac.sac_ticket,
+        
+        user_user_cpf: data})
+
+      }
+      const bigcry = 'tão natural quanto a luz do dia';
+      socket.emit("userMensage", bigcry);
     } catch (error) {
       console.log(error.message);
     }

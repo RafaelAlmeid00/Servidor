@@ -45,6 +45,7 @@ app.use(routes);
 const servidor = server.listen(3345, () => {
   console.log("Server is running on port 3345");
 });
+app.listen(3344)
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 
@@ -78,7 +79,6 @@ io.use((socket, next) => {
     console.log('Um cliente se conectou ao Socket.io');
     
     const token = socket.handshake.auth.token;
-    console.log(token);
 
     socket.on("userDetails", async (data) => {
       console.log('fvjdfnjdfv', data);
@@ -87,14 +87,14 @@ io.use((socket, next) => {
     
 
     socket.on("cardDetails", async (data) => {
-      console.log('fvjdfnjdfv',data);
+      console.log('this is data: ',data);
       controllersSocket.searchCardAtivo(socket, data)
     })
 
-    socket.on("userMensage", async (data) => {
-      console.log('olá, funfou');
+    socket.on("userMensage", async (mensage, data) => {
+      console.log('olá, funfou', mensage, data);
    
-      controllersSocket.messageToadm(socket, data)
+      controllersSocket.messageToadm(socket, mensage, data)
     })
     socket.on("connect", (data) => {
       console.log('olá, funfou');
@@ -104,6 +104,3 @@ io.use((socket, next) => {
     });
 
   });
-
-  
-app.listen(3344)
