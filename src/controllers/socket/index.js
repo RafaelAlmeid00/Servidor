@@ -39,19 +39,19 @@ module.exports = {
 
   async messageToadm(socket, mensage, data) {
     try {
-      console.log('this is dataaaaaaaaaaaaaaaaaaaaaaa: ', data);
+      console.log('this is dataa: ', data);
       const idgenerated = require('uniqid');
       
       const income = idgenerated.time();
       console.log('thi is income: ', income);
 
-      //YYYY-MM-DD
+      //tá naquele padrão doidão lá YYYY-MM-DD
       var currentdate = new Date();
       console.log('time: ', currentdate);
       const [verify] = await knex('sac').where('user_user_CPF', '=', data);
       console.log('this is verify: ', verify);
-      if (verify) {
-
+      if (verify != undefined) {
+        //sac já existe
         const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
 
         console.log('this is idmen: ', idmen);
@@ -68,23 +68,31 @@ module.exports = {
           sacmen_texto: mensage,
           sacmen_id: NewId
         })
+
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc')
         socket.emit("userMensage", reload);
       }else{
+        //iniciar sac
+        await knex('sac').insert({
+          sac_ticket: income,
+          user_user_CPF: data
 
-      const {sac} = await knex('sac').insert({
-        sac_ticket: income,
-        user_user_CPF: data
+        });
+        
+        console.log('this is sac_ticket', income);
 
-      })
+        await knex('sac_message').insert({
+          sac_sac_ticket: income,
+          sac_data: currentdate,
+          sacmen_texto: mensage,
+          sacmen_id: 1,
+          user_user_cpf: data});
 
-      await knex('sac_message').insert({
-        sac_ticket: sac.sac_ticket,
-        user_user_cpf: data})
+        const initialMsg = await knex('sac_message').where('sac_sac_ticket', '=', income).orderBy('sacmen_id', 'asc');
+        console.log('this is initial: ', initialMsg);
+        socket.emit("userMensage", initialMsg);
 
-      }
-      const bigcry = 'tão natural quanto a luz do dia';
-      socket.emit("userMensage", bigcry);
+        }
     } catch (error) {
       console.log(error.message);
     }
