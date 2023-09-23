@@ -91,10 +91,14 @@ io.use((socket, next) => {
       controllersSocket.searchCardAtivo(socket, data)
     })
 
-    socket.on("userMensage", async (mensage, data) => {
+    socket.on("userMensage", async (mensage, data, user) => {
       console.log('olá, funfou', mensage, data);
-   
-      controllersSocket.messageToadm(socket, mensage, data)
+      if (user == 'client') {
+        controllersSocket.messageToadm(socket, mensage, data);
+      }else{
+        controllersSocket.messageTouser(socket, mensage, data);
+      }
+
     })
     socket.on("connect", (data) => {
       console.log('olá, funfou');

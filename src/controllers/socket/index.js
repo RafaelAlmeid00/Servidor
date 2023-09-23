@@ -69,7 +69,7 @@ module.exports = {
           sacmen_id: NewId
         })
 
-        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc')
+        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
         socket.emit("userMensage", reload);
       }else{
         //iniciar sac
@@ -98,9 +98,8 @@ module.exports = {
     }
   },
 
-  async ConstantEmit(){
-
-
+  async messageTouser(socket, mensage, data){
+    
   }
 
 }
