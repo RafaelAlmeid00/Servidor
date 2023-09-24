@@ -7,6 +7,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const uuid = require('uuid');
 const moment = require('moment');
+const twilio = require('twilio');
 const storage = multer.diskStorage({
   destination: './user/fundoperfil',
   filename: function (req, file, cb) {
@@ -133,29 +134,29 @@ module.exports = {
 
       console.log('teste rapidão: ', cpf);
 
-            const senha = await bcrypt.hash(password, 10);
+      const senha = await bcrypt.hash(password, 10);
 
-            await knex("user").insert({
-                user_CPF: cpf,
-                user_RG: rg,
-                user_nome: name,
-                user_email: email,
-                user_senha: senha,
-                user_nascimento: date,
-                user_endCEP: cep,
-                user_endUF: UF,
-                user_endbairro: district,
-                user_endrua: street,
-                user_endnum: num,
-                user_endcomplemento: comp,
-                user_endcidade: city,
-                user_tipo: type,
-                list_CPF_list_id: id
-            });
+      await knex("user").insert({
+        user_CPF: cpf,
+        user_RG: rg,
+        user_nome: name,
+        user_email: email,
+        user_senha: senha,
+        user_nascimento: date,
+        user_endCEP: cep,
+        user_endUF: UF,
+        user_endbairro: district,
+        user_endrua: street,
+        user_endnum: num,
+        user_endcomplemento: comp,
+        user_endcidade: city,
+        user_tipo: type,
+        list_CPF_list_id: id
+      });
 
       return res.status(201).send("User registered");
     } catch (error) {
-        return res.status(400).send({ error: error.message });
+      return res.status(400).send({ error: error.message });
     }
   },
 
@@ -425,9 +426,8 @@ module.exports = {
 
   async UpdateUser(req, res) {
     try {
-      const { user_CPF: cpf, updates } = req.body; // Recebe um objeto chamado "updates" contendo os campos a serem atualizados
+      const { user_CPF: cpf, updates } = req.body; 
 
-      // Mapeamento dos campos do objeto "updates" para os campos do banco de dados
       const paramToField = {
         nome: 'user_nome',
         email: 'user_email',
@@ -439,42 +439,32 @@ module.exports = {
         rua: 'user_endrua',
         complemento: 'user_endcomplemento',
         cidade: 'user_endcidade',
+        verifyemail: 'user_verifyemail',
+        verifycel: 'user_verifycel',
       };
 
       const updateFields = {};
-      let isSenhaUpdated = false; // Variável para indicar se o campo "senha" foi atualizado
-
-      // Verifica cada campo fornecido no objeto "updates" e mapeia para o campo correspondente no banco de dados
+      let isSenhaUpdated = false;
+  
       for (const param in updates) {
         if (paramToField.hasOwnProperty(param)) {
           if (param === 'senha') {
-            console.log(updates);
-            console.log(param);
-            // Caso o campo seja "senha", faça o hash da senha antes de atualizá-la no banco de dados
             const hashedPassword = await bcrypt.hash(updates[param], 10);
-            console.log(hashedPassword);
             updateFields[paramToField[param]] = hashedPassword;
-            console.log(updateFields);
-            console.log(updateFields[paramToField[param]]);
             isSenhaUpdated = true;
           } else {
             updateFields[paramToField[param]] = updates[param];
           }
         }
       }
-      console.log(updates);
-
-      // Verifica se existem campos válidos para atualização
+  
       if (Object.keys(updateFields).length > 0) {
-        // Faça a atualização no banco de dados
         await knex('user').where('user_CPF', '=', cpf).update(updateFields);
-        res.status(200).send('Atualização realizada com sucesso.');
-      } else {
-        res.status(400).send('Nenhum campo válido para atualização fornecido.');
-      }
-
-      if (isSenhaUpdated) {
-        res.status(200).send('Senha atualizada com sucesso.');
+        if (isSenhaUpdated) {
+          res.status(200).send('Senha atualizada com sucesso.');
+        } else {
+          res.status(200).send('Atualização realizada com sucesso.');
+        }
       } else {
         res.status(400).send('Nenhum campo válido para atualização fornecido.');
       }
@@ -483,6 +473,7 @@ module.exports = {
       res.status(500).send('Erro interno do servidor.');
     }
   },
+  
 
   async uploadImage(req, res) {
     try {
@@ -934,7 +925,7 @@ module.exports = {
 
 
   async validateToken(req, res) {
-    const { token } = req.body;
+    const { token: token } = req.body;
 
     if (tokens.has(token)) {
       const timestamp = tokens.get(token);
@@ -1139,6 +1130,176 @@ module.exports = {
     }
   },
 
+  async sendEmailVerify(req, res) {
+    const { user_email: data } = req.body;
+    const { user_CPF: cpf } = req.body;
+    const { user_nome: nome } = req.body;
+    let token = ''
 
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: process.env.email,
+          pass: process.env.senhaemail,
+          clientId: process.env.idclient,
+          clientSecret: process.env.secretkey,
+          refreshToken: process.env.refreshtoken
+        }
+      });
+
+      function formatarCPF(cpf) {
+        const cpfSemDigitos = cpf.slice(0, -3);
+        return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+      }
+
+      token = generateToken();
+      const timestamp = moment().unix();
+      tokens.set(token, timestamp);
+
+      const emailBody = `
+   <!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Estilos para o card */
+    .card {
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      width: 70vw;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center; /* Adicionamos alinhamento central para o conteúdo dentro do card */
+    }
+
+    .card p {
+      margin-top: 5px;
+    }
+
+    /* Estilos para o texto dentro do card */
+    .card-text {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .card-text h1 {
+      color: #30e09a;
+    }
+
+    /* Estilos para o banner */
+    .banner {
+      background-color: rgba(48, 224, 154, 0.2); /* Cor de fundo com transparência */
+      box-shadow: 0 8px 16px rgba(48, 224, 154, 0.1); /* Sombras */
+      border-radius: 20px; /* Borda arredondada */
+      padding: 10px; /* Espaçamento interno */
+      margin-bottom: 20px; /* Espaçamento inferior para separar do parágrafo abaixo */
+    }
+
+    /* Estilos para o botão */
+    .button {
+      display: block; /* Alteramos de flex para block para que o botão não ocupe toda a largura do card */
+      margin: 0 auto; /* Adicionamos margens automáticas para centralizar o botão horizontalmente */
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white; /* Alteramos a cor do texto para branco */
+      background-color: #1976d2;
+      border: none;
+      border-radius: 5px;
+      transition: border 0.3s;
+      margin-top: 50px;
+      width: 200px;
+    }
+
+    /* Estilos para o hover do botão */
+    .button:hover {
+      border: 2px solid #30e09a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-text">
+      <div class="banner"> <!-- Novo elemento para o banner -->
+        <h1>EasyPass</h1>
+      </div>
+    </div>
+    <p>Olá, ${nome}!</p>
+    <p>Aqui está o seu link para confirmação de email da sua conta EasyPass: CPF - ${formatarCPF(cpf)}</p>
+    <a class="button" href="http://localhost:5173/Sistema?token=${token}">Clique aqui</a>
+  </div>
+</body>
+</html>
+  `;
+      const mailOptions = {
+        from: process.env.email,
+        to: data,
+        subject: 'Alteração de email: EasyPass',
+        html: emailBody
+      };
+      console.log(mailOptions);
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.error('Erro no envio do Email:', error);
+          res.status(400).send('Erro no envio do Email.');
+        } else {
+          console.log(info);
+          console.log('Email enviado com sucesso para:', data);
+          res.status(200).send('Email enviado com sucesso ao: ' + data);
+        }
+      });
+    } catch (error) {
+      console.error('Erro na requisição de envio do Email:', error);
+      res.status(400).send('Erro na requisição de envio do Email.');
+    }
+  },
+
+  async sendSMS(req, res) {
+    const accountSid = process.env.accountSid;
+    const authToken = process.env.authToken;
+    const client = require('twilio')(accountSid, authToken);
+    const { user_cel: cel } = req.body;
+    const { user_CPF: cpf } = req.body;
+    const { user_nome: nome } = req.body;
+    let token = ''
+
+    function formatarCPF(cpf) {
+      const cpfSemDigitos = cpf.slice(0, -3);
+      return cpfSemDigitos.replace(/\d/g, '*') + cpf.slice(-3);
+    }
+
+    token = generateToken();
+    const timestamp = moment().unix();
+    tokens.set(token, timestamp);
+    console.log(tokens);
+
+    const message = `Olá ${nome}.\n
+    Aqui está o seu link para confirmação de número da sua conta EasyPass: CPF - ${formatarCPF(cpf)}\n
+    http://localhost:5173/Sistema?tokencel=${token}`
+
+
+    try {
+      const response = await client.messages.create({
+        body: message,
+        from: '+12564140958',
+        to: `+55${cel}`,
+      });
+
+      console.log(response.sid);
+      console.log(response);
+      console.log('SMS enviado com sucesso para:', `+55${cel}`);
+      res.status(200).send('SMS enviado com sucesso ao: ' + cel);
+    } catch (error) {
+      console.error('Erro na requisição de envio do SMS:', error);
+      res.status(400).send('Erro na requisição de envio do SMS:' + error.message);
+    }
+
+
+
+  },
 
 };
