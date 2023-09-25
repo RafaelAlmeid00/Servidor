@@ -75,10 +75,7 @@ module.exports = {
         // Compare as datas para classificar em ordem decrescente (mais recente para mais antigo)
         return dateB - dateA;
       });
-      
 
-      console.log(validationsWithInfo);
-      console.log(sortedValidationsWithInfo);
 
       return res.status(200).json(sortedValidationsWithInfo);
     } catch (error) {

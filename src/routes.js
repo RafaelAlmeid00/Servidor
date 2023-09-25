@@ -60,6 +60,8 @@ routes.post('/user/updateemail', controllersUser.sendEmail);
 routes.post('/user/rgtras', controllersUser.uploadDocumentosRGtras);
 routes.post('/user/rgfrente', controllersUser.uploadDocumentosRG);
 routes.post('/user/facialupload', controllersUser.uploadDocumentosfacial);
+routes.post('/user/emailverify', controllersUser.sendEmailVerify);
+routes.post('/user/sms', controllersUser.sendSMS);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
