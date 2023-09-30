@@ -61,6 +61,7 @@ let codes = new Map();
 
 const fs = require('fs');
 const dotenv = require('dotenv');
+const knexfile = require("../../knexfile");
 dotenv.config();
 
 
@@ -167,8 +168,11 @@ module.exports = {
       console.log(cpf2);
       const { user_senha: password } = req.body;
       console.log('this is the password: ', password);
+      console.log(knex);
+      console.log(knexfile);
 
       const [takeCPF] = await knex("user").where("user_CPF", "=", String(cpf2));
+      console.log(takeCPF);
 
       if (takeCPF != undefined) {
         bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
