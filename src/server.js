@@ -45,7 +45,6 @@ app.use(routes);
 const servidor = server.listen(3344, () => {
   console.log("Server is running on port 3345");
 });
-app.listen(3344)
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 
