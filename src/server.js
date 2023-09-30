@@ -43,7 +43,7 @@ app.use(express.json());
 app.use(routes);
 
 const servidor = server.listen(3344, () => {
-  console.log("Server is running on port 3345");
+  console.log("Server is running on port 3344");
 });
 //Controller
 const controllersSocket = require('./controllers/socket/index');
@@ -51,7 +51,7 @@ const controllersSocket = require('./controllers/socket/index');
 //Socket.io
 const io = new Server(servidor, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "https://easypass-app.onrender.com/",
     credentials: true,
     methods: ["GET", "POST"]
   },
