@@ -51,7 +51,7 @@ const controllersSocket = require('./controllers/socket/index');
 //Socket.io
 const io = new Server(servidor, {
   cors: {
-    origin: "https://easypass-app.onrender.com/",
+    origin: "https://easypass-app.onrender.com",
     credentials: true,
     methods: ["GET", "POST"]
   },
