@@ -100,6 +100,8 @@ io.use((socket, next) => {
       }
 
     })
+
+    //só falta fzr um emit aq pro client e o adm
     socket.on("connect", (data) => {
       console.log('olá, funfou');
     });
