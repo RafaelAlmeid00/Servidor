@@ -57,7 +57,7 @@ module.exports = {
     }
 
     if (query == 'todos') {
-      url = `https://api.asaas.com/v3/payments?customers=${idcli}&limit=100`;
+      url = `https://api.asaas.com/v3/payments?customer=${idcli}&limit=100`;
     } else {
       url = `https://api.asaas.com/v3/payments?status=${query}&limit=100`;
     }
