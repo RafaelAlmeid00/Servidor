@@ -92,7 +92,11 @@ module.exports = {
   },
 
   async messageTouser(socket, mensage, data){
-    
+    try {
+      console.log('this is men to user: ', mensage, data);
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
 }

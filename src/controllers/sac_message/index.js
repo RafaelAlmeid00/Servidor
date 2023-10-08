@@ -28,10 +28,25 @@ module.exports = {
             console.log(error);
         }
     },
-
-
-    async excludMessage(req, res) {
-
-    },
+    async admSac (req, res){
+        try {
+            var perfil = []
+            const take = await knex("sac_message").select('sac_sac_ticket', 'sacmen_texto', 'user_user_CPF', knex.raw('MAX(sacmen_id) as max_sacmen_id')).groupBy('sac_sac_ticket');
+            console.log(take.length);
+            for (let index = 0; index < take.length; index++) {
+                const element = take[index];
+                console.log('aaaaaafrfra');
+                var [nextPhoto] = await knex('user').where('user_CPF', '=', element.user_user_CPF);
+                
+                console.log('cccccccccccccccccc: ', nextPhoto);
+                
+                perfil.push(nextPhoto);
+            }
+            res.status(201).json({'lastMen': take, 'perfil': perfil});
+        } catch (error) {
+            res.status(400).send('deu ruim!');
+            console.log(error);
+        }
+    }
     
 }

@@ -10,7 +10,7 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 const http = require('http');
-const server = http.createServer(app);
+const server = http.createServer();
 const { Server } = require('socket.io');
 const middleware = require('./controllers/Middleware');
 const uniqid = require('uniqid');
@@ -51,7 +51,7 @@ const controllersSocket = require('./controllers/socket/index');
 //Socket.io
 const io = new Server(servidor, {
   cors: {
-    origin: "https://easypass-app.onrender.com",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST"]
   },
@@ -109,3 +109,5 @@ io.use((socket, next) => {
     });
 
   });
+
+  app.listen(3345)

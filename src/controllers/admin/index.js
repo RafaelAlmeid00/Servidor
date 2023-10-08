@@ -25,6 +25,7 @@ module.exports = {
                 var token = jwt.sign({
                     Name: Email.adm_nome,
                     Email: Email.adm_email,
+                    adm_id: Email.adm_id,
                     adm_level: Email.adm_level
                 }, process.env.JWT_SECRET, { expiresIn: '7d' });
                 res.status(201).json({token: token});}

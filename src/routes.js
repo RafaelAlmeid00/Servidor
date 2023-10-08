@@ -47,6 +47,7 @@ routes.post('/listcpf', controllerListCPF.createListCpf);
 routes.delete('/listcpf/:CNPJ', controllerListCPF.listcpfDelete);
 routes.get('/listcpf', controllerListCPF.searchListCpf);
 routes.post('/listcpf/search', controllerListCPF.searchCpf);
+routes.get('/admSac', controllerMessage.admSac)
 
 routes.post('/admlogin', controllerAdm.Admlogin);
 
