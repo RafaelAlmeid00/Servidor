@@ -109,5 +109,3 @@ io.use((socket, next) => {
     });
 
   });
-
-  app.listen(3345)
