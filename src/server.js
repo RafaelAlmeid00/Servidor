@@ -10,15 +10,13 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 const http = require('http');
-const server = http.createServer();
+const server = http.createServer(app);
 const { Server } = require('socket.io');
 const middleware = require('./controllers/Middleware');
 const uniqid = require('uniqid');
-
 app.use(cors({
   credentials: true,
 }));
-
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', 'true')
   res.header("Access-Control-Allow-Origin", "*");
@@ -26,7 +24,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
 app.use(session({
   key: "userId",
   secret: 'sazuki',
@@ -36,18 +33,13 @@ app.use(session({
     expires: 1000 * 60 * 60 * 24,
   }
 }));
-
-
-
 app.use(express.json());
 app.use(routes);
-
 const servidor = server.listen(3344, () => {
   console.log("Server is running on port 3344");
 });
 //Controller
 const controllersSocket = require('./controllers/socket/index');
-
 //Socket.io
 const io = new Server(servidor, {
   cors: {
@@ -56,17 +48,14 @@ const io = new Server(servidor, {
     methods: ["GET", "POST"]
   },
 });
-
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
     return next(new Error("Token não fornecido"));
   }
-
   const headers = {
     authorization: token
   };
-
   middleware.mid({ headers }, {}, (error) => {
     if (error) {
       return next(new Error("Token inválido"));
@@ -78,18 +67,15 @@ io.use((socket, next) => {
     console.log('Um cliente se conectou ao Socket.io');
     
     const token = socket.handshake.auth.token;
-
     socket.on("userDetails", async (data) => {
       console.log('fvjdfnjdfv', data);
       controllersSocket.searchUserCPF(socket, data)
     })
     
-
     socket.on("cardDetails", async (data) => {
       console.log('this is data: ',data);
       controllersSocket.searchCardAtivo(socket, data)
     })
-
     socket.on("userMensage", async (mensage, data, user) => {
       console.log('olá, funfou', mensage, data);
       if (user == 'client') {
@@ -97,9 +83,7 @@ io.use((socket, next) => {
       }else{
         controllersSocket.messageTouser(socket, mensage, data);
       }
-
     })
-
     //só falta fzr um emit aq pro client e o adm
     socket.on("connect", (data) => {
       console.log('olá, funfou');
@@ -107,5 +91,4 @@ io.use((socket, next) => {
     socket.on("ping", (callback) => {
       callback();
     });
-
   });
