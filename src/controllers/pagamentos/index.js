@@ -15,8 +15,9 @@ module.exports = {
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+        access_token: token
       },
       body: JSON.stringify(cliente)
     };
@@ -119,6 +120,7 @@ module.exports = {
 
     pagamento.dataCriacao = new Date();
 
+    console.log(token)
     const url = 'https://api.asaas.com/v3/payments';
     const options = {
       method: 'POST',
