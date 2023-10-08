@@ -6,6 +6,41 @@ const knex = require('../../database/index')
 const listaPagamentos = [];
 
 module.exports = {
+  async createCliente(req, res) {
+    const { cliente } = req.body;
+    console.log(cliente);
+
+    const apiUrl = 'https://api.asaas.com/v3/customers';
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(cliente)
+    };
+
+    try {
+      const response = await fetch(apiUrl, requestOptions);
+
+      if (response.status === 200) {
+        const responseData = await response.json();
+        console.log('Cliente criado com sucesso:', responseData);
+
+        res.status(200).json(responseData);
+      } else {
+        console.error('Erro ao criar cliente:', response.statusText);
+
+        res.status(response.status).json({ error: 'Erro ao criar cliente' });
+      }
+    } catch (error) {
+      console.error('Erro ao criar cliente:', error.message);
+
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  },
+
   async searchPayments(req, res) {
     const idcli = req.body.params.idcli;
     const query = req.body.params.tipo;
