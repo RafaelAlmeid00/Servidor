@@ -4,33 +4,35 @@ module.exports = {
   async searchCard(req, res) {
     const { user_CPF: list_CPF } = req.body;
     console.log(list_CPF)
-
+  
     try {
       // Passo 1: Pesquisar todas as tuplas com o user_CPF fornecido na tabela 'request_card'.
       const takeCPF = await knex("request_card").where("user_user_CPF", list_CPF);
       console.log(takeCPF)
-      if (takeCPF.lenght === 0) {
+  
+      if (takeCPF.length === 0) {
         return res.status(400).json({ error: 'Sem pedidos' });
       }
-
+  
       // Passo 2: Extrair todos os valores de req_id das tuplas retornadas.
       const reqIds = takeCPF.map((item) => item.req_id);
       console.log(reqIds)
-
-      // Passo 3: Pesquisar na tabela 'card' usando os reqIds obtidos e filtrar por 'card_status' = "cancelado".
+  
+      // Passo 3: Pesquisar na tabela 'card' usando os reqIds obtidos e filtrar por 'card_status' = "ativo".
       const activeCards = await knex("card").whereIn("request_card_req_id", reqIds).andWhere("card_status", "ativo");
-      if (activeCards.lenght === 0) {
-        return res.status(400).json({ error: 'Sem cards' });
+      if (activeCards.length === 0) {
+        return res.status(400).json({ error: 'Sem cards ativos' });
       }
-      // Passo 4: Registrar a lista de cartões cancelados no servidor.
-      console.log("Cartões Ativo:", activeCards);
-
-      // Passo 5: Enviar a lista de cartões cancelados para o front-end.
+      // Passo 4: Registrar a lista de cartões ativos no servidor.
+      console.log("Cartões Ativos:", activeCards);
+  
+      // Passo 5: Enviar a lista de cartões ativos para o front-end.
       res.status(201).json(activeCards);
     } catch (error) {
       return res.status(400).json({ error: error.message });
     }
   },
+  
 
   async searchCardCancel(req, res) {
     const { user_CPF: list_CPF } = req.body;
