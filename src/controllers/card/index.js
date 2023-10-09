@@ -9,7 +9,7 @@ module.exports = {
       // Passo 1: Pesquisar todas as tuplas com o user_CPF fornecido na tabela 'request_card'.
       const takeCPF = await knex("request_card").where("user_user_CPF", list_CPF);
       console.log(takeCPF)
-      if (!takeCPF) {
+      if (takeCPF.lenght === 0) {
         return res.status(400).json({ error: 'Sem pedidos' });
       }
 
@@ -19,7 +19,7 @@ module.exports = {
 
       // Passo 3: Pesquisar na tabela 'card' usando os reqIds obtidos e filtrar por 'card_status' = "cancelado".
       const activeCards = await knex("card").whereIn("request_card_req_id", reqIds).andWhere("card_status", "ativo");
-      if (!activeCards) {
+      if (activeCards.lenght === 0) {
         return res.status(400).json({ error: 'Sem cards' });
       }
       // Passo 4: Registrar a lista de cartões cancelados no servidor.
