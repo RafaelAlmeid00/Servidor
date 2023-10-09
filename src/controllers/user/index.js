@@ -152,7 +152,9 @@ module.exports = {
         user_endcomplemento: comp,
         user_endcidade: city,
         user_tipo: type,
-        list_CPF_list_id: id
+        list_CPF_list_id: id,
+        user_cel: cel,
+        user_idcli: idcli
       });
 
       return res.status(201).send("User registered");

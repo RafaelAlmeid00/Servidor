@@ -28,6 +28,8 @@ const middleware = require('./controllers/Middleware');
 routes.use(cookie());
 routes.use(cors());
 
+routes.post('/cliente', controllerAsaas.createCliente)
+
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
