@@ -11,7 +11,7 @@ module.exports = {
       console.log(takeCPF)
   
       if (takeCPF.length === 0) {
-        return res.status(400).json({ error: 'Sem pedidos' });
+        return res.status(200).json({ error: 'Sem pedidos' });
       }
   
       // Passo 2: Extrair todos os valores de req_id das tuplas retornadas.
@@ -21,7 +21,7 @@ module.exports = {
       // Passo 3: Pesquisar na tabela 'card' usando os reqIds obtidos e filtrar por 'card_status' = "ativo".
       const activeCards = await knex("card").whereIn("request_card_req_id", reqIds).andWhere("card_status", "ativo");
       if (activeCards.length === 0) {
-        return res.status(400).json({ error: 'Sem cards ativos' });
+        return res.status(200).json({ error: 'Sem cards ativos' });
       }
       // Passo 4: Registrar a lista de cartões ativos no servidor.
       console.log("Cartões Ativos:", activeCards);
