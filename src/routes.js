@@ -33,7 +33,7 @@ routes.post('/user/login', controllersUser.UserLogin);
 routes.post('/user/email', controllersUser.searchUserEmail);
 routes.post('/user/cpf', controllersUser.searchUserCPF);
 routes.post('/user/returnfundo', controllersUser.returnFundo);
-routes.post('/user/returnperfil', controllersUser.returnPerfil);
+routes.post('/user/returnperfil', controllersUser.returnPerfil);    
 routes.post('/user/validatetoken', controllersUser.validateToken);
 routes.post('/user/updatesenha', controllersUser.sendSenha);
 routes.post('/user/validadecode', controllersUser.validadeCode);
@@ -51,6 +51,9 @@ routes.get('/admSac', controllerMessage.admSac)
 
 routes.post('/admlogin', controllerAdm.Admlogin);
 
+
+routes.post('/message1', controllerMessage.CadMessage);
+routes.post('/message', controllerMessage.SearchMessage)
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/delete', controllersUser.DeleteUser);
@@ -101,8 +104,7 @@ routes.delete('/driver', controllerDriver.attDriver);
 routes.post('/sac', controllersSac.CadSac);
 routes.get('/sac', controllersSac.Search);
 
-routes.post('/message', controllerMessage.CadMessage);
-routes.get('/message', controllerMessage.SearchMessage)
+
 
 routes.get('/cliente/search', controllerAsaas.searchCustomer);
 routes.post('/pagamento', controllerAsaas.createPay);
