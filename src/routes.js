@@ -22,6 +22,7 @@ const controllerCardEnvio = require('./controllers/card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
 const controllerAdm = require('./controllers/admin/index')
 const controllerUseCard = require('./controllers/use_card/index')
+const controllerCurriculo = require('./controllers/curriculo/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -29,6 +30,8 @@ routes.use(cookie());
 routes.use(cors());
 
 routes.post('/cliente', controllerAsaas.createCliente)
+
+routes.post('/curriculo', controllerCurriculo.createCurriculo)
 
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
