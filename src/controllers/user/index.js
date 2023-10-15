@@ -70,7 +70,7 @@ module.exports = {
   async TesteToken(req, res) {
     try {
       console.log('Testando token');
-      res.status(201).json('Token valido: ', req.body);
+      res.status(201).json({ message: 'Token valido', data: req.body });
     } catch (error) {
       console.log('error: ', error);
       return res.status(400).json({ error: error.message });
