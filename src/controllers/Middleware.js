@@ -4,14 +4,15 @@ dotenv.config();
 
 module.exports = {
   async mid(req, res, next) {
-    let token
-    let authheader
+    let token;
+    let authheader;
 
     if (req.headers['authorization']) {
-      authheader = req.headers['authorization']
+      authheader = req.headers['authorization'];
     } else {
-      token = req.body.token
+      token = req.body.token;
     }
+
     console.log('Middleware called');
     const test = process.env.JWT_SECRET;
     console.log('token: ', token);
@@ -22,14 +23,18 @@ module.exports = {
         jwt.verify(token ? token : authheader, test, (err, decoded) => {
           console.log('this is decoded and err: ', decoded, err);
           if (err) {
-            return res.status(401).json({ message: 'Token inválido' });
+            if (err.name === 'TokenExpiredError') {
+              return res.status(401).json({ message: 'Token expirado' });
+            } else {
+              return res.status(401).json({ message: 'Token inválido' });
+            }
           }
+
           console.log('Passou pelo mid');
           return next();
         });
       } catch (error) {
-        console.log('aaaaaaaaaaaaa');
-        console.log(error);
+        console.log('Erro no middleware:', error);
         res.status(400).send(error);
       }
     } else {

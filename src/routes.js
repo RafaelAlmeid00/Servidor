@@ -62,6 +62,7 @@ routes.post('/message1', controllerMessage.CadMessage);
 routes.post('/message', controllerMessage.SearchMessage)
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
+routes.post('/user/testetoken', controllersUser.TesteToken);
 routes.post('/user/delete', controllersUser.DeleteUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
