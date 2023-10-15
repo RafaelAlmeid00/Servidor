@@ -33,8 +33,6 @@ routes.post('/cliente', controllerAsaas.createCliente)
 
 routes.post('/curriculo', controllerCurriculo.createOrUpdateCurriculo)
 routes.get('/curriculo/:cpf', controllerCurriculo.getCurriculoByCPF)
-routes.post('/curriculo/foto', controllerCurriculo.uploadImagePerfil)
-routes.post('/curriculo/fotoreturn', controllerCurriculo.returnPerfil)
 
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
