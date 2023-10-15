@@ -35,7 +35,7 @@ module.exports = {
         });
       } catch (error) {
         console.log('Erro no middleware:', error);
-        res.status(400).send(error);
+        res.status(400).json({message: error});
       }
     } else {
       return res.status(401).json({ message: 'Token não fornecido' });

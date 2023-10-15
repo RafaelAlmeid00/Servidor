@@ -311,21 +311,22 @@ module.exports = {
 
   async DeleteUser(req, res) {
     try {
-
       const { user_CPF: data } = req.body;
-
+  
       console.log('this is cookies 2: ', data);
       console.log('someone here??');
-
-      const result = await knex("user").where('user_CPF', '=', data).del();
-      res.cookie('token', '', { expires: new Date(0), httpOnly: true, secure: true });
-
+  
+      const result = await knex("user")
+        .where('user_CPF', '=', data)
+        .update({ user_status: 'cancelado' });
+  
       res.status(201).json(result);
     } catch (error) {
       console.log('error: ', error);
       return res.status(400).json({ error: error.message });
     }
   },
+  
 
   async UpdateUser(req, res) {
     try {
