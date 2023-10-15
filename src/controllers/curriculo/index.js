@@ -30,7 +30,8 @@ module.exports = {
                 cur_instagram,
                 cur_github,
                 cur_facebook,
-                cur_foto_perfil
+                cur_foto_perfil,
+                cur_con_prog
             } = req.body;
 
             console.log(req.body);
@@ -62,7 +63,8 @@ module.exports = {
                 cur_instagram,
                 cur_github,
                 cur_facebook,
-                cur_foto_perfil
+                cur_foto_perfil,
+                cur_con_prog
             });
 
             res.status(201).send('Currículo cadastrado com sucesso!');
