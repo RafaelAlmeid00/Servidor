@@ -32,7 +32,7 @@ routes.use(cors());
 routes.post('/cliente', controllerAsaas.createCliente)
 
 routes.post('/curriculo', controllerCurriculo.createCurriculo)
-routes.get('/curriculo:cpf', controllerCurriculo.getCurriculoByCPF)
+routes.get('/curriculo/:cpf', controllerCurriculo.getCurriculoByCPF)
 
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
