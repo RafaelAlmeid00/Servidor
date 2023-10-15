@@ -86,7 +86,7 @@ routes.get('/card', controllersRequestCard.searchReqCard);
 routes.post('/card/search', controllersRequestCard.searchReqCPF);
 routes.post('/card/envio', controllerCardEnvio.cadCard);
 routes.post('/card/enviados', controllerCardEnvio.searchCard);
-routes.delete('/card/delete', controllerCardEnvio.exclCard);
+routes.post('/card/delete', controllerCardEnvio.exclCard);
 routes.post('/card/cancelados', controllerCardEnvio.searchCardCancel);
 
 routes.post('/routes/all', controllerBusRoute.searchBusGeral);
