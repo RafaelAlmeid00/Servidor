@@ -187,6 +187,11 @@ module.exports = {
       console.log(takeCPF);
 
       if (takeCPF != undefined) {
+
+        if (takeCPF.user_status == "cancelado") {
+          res.status(400).send('email ou senha inválido') 
+        }
+
         bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
           if (err || comp == false) {
             console.log('comp: ', comp);
@@ -312,25 +317,25 @@ module.exports = {
   async DeleteUser(req, res) {
     try {
       const { user_CPF: data } = req.body;
-  
+
       console.log('this is cookies 2: ', data);
       console.log('someone here??');
-  
+
       const result = await knex("user")
         .where('user_CPF', '=', data)
         .update({ user_status: 'cancelado' });
-  
+
       res.status(201).json(result);
     } catch (error) {
       console.log('error: ', error);
       return res.status(400).json({ error: error.message });
     }
   },
-  
+
 
   async UpdateUser(req, res) {
     try {
-      const { user_CPF: cpf, updates } = req.body; 
+      const { user_CPF: cpf, updates } = req.body;
 
       const paramToField = {
         nome: 'user_nome',
@@ -349,7 +354,7 @@ module.exports = {
 
       const updateFields = {};
       let isSenhaUpdated = false;
-  
+
       for (const param in updates) {
         if (paramToField.hasOwnProperty(param)) {
           if (param === 'senha') {
@@ -361,7 +366,7 @@ module.exports = {
           }
         }
       }
-  
+
       if (Object.keys(updateFields).length > 0) {
         await knex('user').where('user_CPF', '=', cpf).update(updateFields);
         if (isSenhaUpdated) {
@@ -377,7 +382,7 @@ module.exports = {
       res.status(500).send('Erro interno do servidor.');
     }
   },
-  
+
 
   async uploadImage(req, res) {
     try {
