@@ -72,5 +72,22 @@ module.exports = {
             res.status(400).send(error);
             console.log(error);
         }
+    },
+
+    async getCurriculoByCPF(req, res) {
+        try {
+            const { cpf } = req.params;
+
+            const curriculo = await knex('curriculo').where({ cur_CPF: cpf }).first();
+
+            if (curriculo) {
+                res.status(200).json(curriculo);
+            } else {
+                res.status(404).send('Currículo não encontrado');
+            }
+        } catch (error) {
+            res.status(500).send('Erro interno do servidor');
+            console.log(error);
+        }
     }
 };
