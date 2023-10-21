@@ -56,6 +56,7 @@ routes.post('/listcpf/search', controllerListCPF.searchCpf);
 routes.get('/admSac', controllerMessage.admSac)
 
 routes.post('/admlogin', controllerAdm.Admlogin);
+routes.post('/busslogin', controllerAdm.Empresalogin);
 
 
 routes.post('/message1', controllerMessage.CadMessage);
