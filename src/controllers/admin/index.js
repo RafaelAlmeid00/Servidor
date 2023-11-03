@@ -5,11 +5,22 @@ const path = require('path')
 const dotenv = require('dotenv');
 
 module.exports = {
+
+    async TesteToken(req, res) {
+        try {
+            console.log('Testando token');
+            res.status(201).json({ message: 'Token valido', data: req.body });
+        } catch (error) {
+            console.log('error: ', error);
+            return res.status(400).json({ error: error.message });
+        }
+    },
+
     async Admlogin(req, res) {
         dotenv.config()
         console.log('this is dotenv: ', dotenv);
-        const {email: email} = req.body;
-        const {password: password} = req.body;
+        const { email: email } = req.body;
+        const { password: password } = req.body;
 
         const [Email] = await knex('admin').where('adm_email', '=', email);
         console.log('this is email: ', Email);
@@ -31,7 +42,7 @@ module.exports = {
                     res.status(201).json({ token: token });
                 }
             })
-        }else{
+        } else {
             res.status(401).send('senha ou email errado')
         }
 
@@ -40,8 +51,8 @@ module.exports = {
     async Empresalogin(req, res) {
         dotenv.config()
         console.log('this is dotenv: ', dotenv);
-        const {cnpj: cnpj} = req.body;
-        const {password: password} = req.body;
+        const { cnpj: cnpj } = req.body;
+        const { password: password } = req.body;
 
         const [CNPJ] = await knex('bussines').where('buss_CNPJ', '=', cnpj);
         console.log('this is email: ', CNPJ);
@@ -71,7 +82,7 @@ module.exports = {
                     res.status(201).json({ token: token });
                 }
             })
-        }else{
+        } else {
             res.status(401).send('senha ou email errado')
         }
 

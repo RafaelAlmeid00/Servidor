@@ -61,6 +61,7 @@ routes.post('/busslogin', controllerAdm.Empresalogin);
 
 routes.post('/message1', controllerMessage.CadMessage);
 routes.post('/message', controllerMessage.SearchMessage)
+
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
 routes.post('/user/testetoken', controllersUser.TesteToken);
@@ -74,6 +75,8 @@ routes.post('/user/rgfrente', controllersUser.uploadDocumentosRG);
 routes.post('/user/facialupload', controllersUser.uploadDocumentosfacial);
 routes.post('/user/emailverify', controllersUser.sendEmailVerify);
 routes.post('/user/sms', controllersUser.sendSMS);
+
+routes.post('/adm/testetoken', controllerAdm.TesteToken);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
