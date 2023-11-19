@@ -22,6 +22,7 @@ const controllerCardEnvio = require('./controllers/card/index')
 const controllerAsaas = require('./controllers/pagamentos/index')
 const controllerAdm = require('./controllers/admin/index')
 const controllerUseCard = require('./controllers/use_card/index')
+const controllerCurriculo = require('./controllers/curriculo/index')
 
 const middleware = require('./controllers/Middleware');
 
@@ -29,6 +30,9 @@ routes.use(cookie());
 routes.use(cors());
 
 routes.post('/cliente', controllerAsaas.createCliente)
+
+routes.post('/curriculo', controllerCurriculo.createOrUpdateCurriculo)
+routes.get('/curriculo/:cpf', controllerCurriculo.getCurriculoByCPF)
 
 routes.post('/user', controllersUser.createUser);
 routes.post('/user/login', controllersUser.UserLogin);
@@ -52,12 +56,15 @@ routes.post('/listcpf/search', controllerListCPF.searchCpf);
 routes.get('/admSac', controllerMessage.admSac)
 
 routes.post('/admlogin', controllerAdm.Admlogin);
+routes.post('/busslogin', controllerAdm.Empresalogin);
 
 
 routes.post('/message1', controllerMessage.CadMessage);
 routes.post('/message', controllerMessage.SearchMessage)
+
 //👇 middlleware pra uma maior proteção do sistéma 👇
 routes.use(middleware.mid);
+routes.post('/user/testetoken', controllersUser.TesteToken);
 routes.post('/user/delete', controllersUser.DeleteUser);
 routes.post('/user/token', controllersUser.UpdateToken);
 routes.post('/user/fundoupload', controllersUser.uploadImage);
@@ -68,6 +75,8 @@ routes.post('/user/rgfrente', controllersUser.uploadDocumentosRG);
 routes.post('/user/facialupload', controllersUser.uploadDocumentosfacial);
 routes.post('/user/emailverify', controllersUser.sendEmailVerify);
 routes.post('/user/sms', controllersUser.sendSMS);
+
+routes.post('/adm/testetoken', controllerAdm.TesteToken);
 
 routes.get('/bussines/search/:CNPJ', controllersBussines.SpecificBussines)
 routes.delete('/bussines/:CNPJ', controllersBussines.deleteBussines);
@@ -81,7 +90,7 @@ routes.get('/card', controllersRequestCard.searchReqCard);
 routes.post('/card/search', controllersRequestCard.searchReqCPF);
 routes.post('/card/envio', controllerCardEnvio.cadCard);
 routes.post('/card/enviados', controllerCardEnvio.searchCard);
-routes.delete('/card/delete', controllerCardEnvio.exclCard);
+routes.post('/card/delete', controllerCardEnvio.exclCard);
 routes.post('/card/cancelados', controllerCardEnvio.searchCardCancel);
 
 routes.post('/routes/all', controllerBusRoute.searchBusGeral);

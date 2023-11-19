@@ -41,9 +41,21 @@ const servidor = server.listen(3345, () => {
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 //Socket.io
+const origins = [
+  "https://easypass-app.onrender.com",
+  "http://localhost:5173",
+  "http://localhost:19006",
+  "http://localhost:5174",
+];
+
 const io = new Server(servidor, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"], 
+    origin: (origin, next) => {
+      if (origins.includes(origin)) {
+        return next(null, true);
+      }
+      return next(new Error("Origin não permitida!"));
+    },
     credentials: true,
     methods: ["GET", "POST"]
   },
@@ -51,6 +63,8 @@ const io = new Server(servidor, {
 
 //A pica ta no origin, eu precisaria de 2 origins 1 do user e outro do adm
  
+
+
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {

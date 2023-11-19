@@ -126,12 +126,16 @@ module.exports = {
   async exclCard(req, res) {
     try {
       const { card_id: id } = req.body;
-      //user_user_CPF: cpf, req_data: date,  req_data: env, req_TipoCartao: card
-      await knex("card").delete({ card_id: id });
-      res.status(201).send('Excluido!');
+  
+      // Atualiza o campo card_status para "cancelado"
+      const result = await knex("card")
+        .where('card_id', '=', id)
+        .update({ card_status: 'cancelado' });
+  
+      res.status(201).send('Cartão cancelado com sucesso!');
     } catch (error) {
-      res.status(400).send('deu ruim!');
-      console.log(error);
+      console.log('Erro: ', error);
+      res.status(400).send('Ocorreu um erro ao cancelar o cartão.');
     }
   },
 }
