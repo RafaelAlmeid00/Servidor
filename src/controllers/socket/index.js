@@ -95,10 +95,32 @@ module.exports = {
     }
   },
 
-  async messageTouser(socket, mensage, data, io){
+  async messageTouser(mensage, data, io, Ticket){
     try {
-      console.log('this is men to user: ', mensage, data);
-      io.emit("userMensage", mensage, data);
+        //sac já existe
+        var currentdate = new Date();
+        const idmen = await knex('sac_message').where('sac_sac_ticket', '=', Ticket).orderBy('sacmen_id', 'asc');
+
+        //console.log('this is idmen: ', idmen);
+        
+        var lastId = idmen.length - 1;
+        const NewId = idmen[lastId].sacmen_id + 1;
+        
+        //console.log('this is id and last: ', NewId, lastId);
+        //console.log('this is user_user_cpf: ', verify.user_user_CPF);
+        await knex('sac_message').insert({
+          sac_sac_ticket: Ticket,
+          admin_adm_id: data,
+          sac_data: currentdate,
+          sacmen_texto: mensage,
+          sacmen_id: NewId
+        })
+
+        const reload = await knex('sac_message').where('sac_sac_ticket', '=', Ticket).orderBy('sacmen_id', 'asc');
+        console.log("this is reload: ", reload);
+        console.log('this is men to user: ', mensage, data, Ticket);
+        io.emit("userMensage", reload);
+       
     } catch (error) {
       console.log(error.message);
     }

@@ -93,14 +93,14 @@ io.use((socket, next) => {
       controllersSocket.searchCardAtivo(socket, data)
     })
     
-    socket.on("userMensage", async (mensage, data, user) => {
+    socket.on("userMensage", async (mensage, data, user, Ticket) => {
       
       if (user == 'client') {
         console.log('olá, client', mensage, data);
         controllersSocket.messageToadm(socket, mensage, data, io);
       }else{
         console.log('olá, adm', mensage, data);
-        controllersSocket.messageTouser(socket, mensage, data, io);
+        controllersSocket.messageTouser(mensage, data, io, Ticket);
       }
     })
     //só falta fzr um emit aq pro client e o adm
