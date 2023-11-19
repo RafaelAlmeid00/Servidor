@@ -10,7 +10,7 @@ module.exports = {
         console.log('this is dotenv: ', dotenv);
         const {email: email} = req.body;
         const {password: password} = req.body;
-
+        
         const [Email] = await knex('admin').where('adm_email', '=', email);
         console.log('this is email: ', Email);
         console.log('this is password: ', password);

@@ -10,7 +10,7 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 const http = require('http');
-const server = http.createServer(app);
+const server = http.createServer();
 const { Server } = require('socket.io');
 const middleware = require('./controllers/Middleware');
 const uniqid = require('uniqid');
@@ -35,7 +35,7 @@ app.use(session({
 }));
 app.use(express.json());
 app.use(routes);
-const servidor = server.listen(3344, () => {
+const servidor = server.listen(3345, () => {
   console.log("Server is running on port 3344");
 });
 //Controller
@@ -43,11 +43,14 @@ const controllersSocket = require('./controllers/socket/index');
 //Socket.io
 const io = new Server(servidor, {
   cors: {
-    origin: "https://easypass-app.onrender.com",
+    origin: ["http://localhost:5173", "http://localhost:5174"], 
     credentials: true,
     methods: ["GET", "POST"]
   },
-});
+}); 
+
+//A pica ta no origin, eu precisaria de 2 origins 1 do user e outro do adm
+ 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
@@ -68,20 +71,22 @@ io.use((socket, next) => {
     
     const token = socket.handshake.auth.token;
     socket.on("userDetails", async (data) => {
-      console.log('fvjdfnjdfv', data);
       controllersSocket.searchUserCPF(socket, data)
     })
     
     socket.on("cardDetails", async (data) => {
-      console.log('this is data: ',data);
+     
       controllersSocket.searchCardAtivo(socket, data)
     })
+    
     socket.on("userMensage", async (mensage, data, user) => {
-      console.log('olá, funfou', mensage, data);
+      
       if (user == 'client') {
-        controllersSocket.messageToadm(socket, mensage, data);
+        console.log('olá, client', mensage, data);
+        controllersSocket.messageToadm(socket, mensage, data, io);
       }else{
-        controllersSocket.messageTouser(socket, mensage, data);
+        console.log('olá, adm', mensage, data);
+        controllersSocket.messageTouser(socket, mensage, data, io);
       }
     })
     //só falta fzr um emit aq pro client e o adm
@@ -92,3 +97,5 @@ io.use((socket, next) => {
       callback();
     });
   });
+
+app.listen('3344')

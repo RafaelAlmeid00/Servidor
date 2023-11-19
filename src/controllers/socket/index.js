@@ -30,7 +30,7 @@ module.exports = {
     }
   },
 
-  async messageToadm(socket, mensage, data) {
+  async messageToadm(socket, mensage, data, io) {
     try {
       console.log('this is dataa: ', data);
       const idgenerated = require('uniqid');
@@ -47,13 +47,13 @@ module.exports = {
         //sac já existe
         const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
 
-        console.log('this is idmen: ', idmen);
+        //console.log('this is idmen: ', idmen);
         
         var lastId = idmen.length - 1;
         const NewId = idmen[lastId].sacmen_id + 1;
         
-        console.log('this is id and last: ', NewId, lastId);
-        console.log('this is user_user_cpf: ', verify.user_user_CPF);
+        //console.log('this is id and last: ', NewId, lastId);
+        //console.log('this is user_user_cpf: ', verify.user_user_CPF);
         await knex('sac_message').insert({
           sac_sac_ticket: verify.sac_ticket,
           user_user_CPF: verify.user_user_CPF,
@@ -63,7 +63,8 @@ module.exports = {
         })
 
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
-        socket.emit("userMensage", reload);
+        console.log("this is reload: ", reload);
+        io.emit("userMensage", reload);
       }else{
         //iniciar sac
         await knex('sac').insert({
@@ -72,7 +73,7 @@ module.exports = {
 
         });
         
-        console.log('this is sac_ticket', income);
+        //console.log('this is sac_ticket', income);
 
         await knex('sac_message').insert({
           sac_sac_ticket: income,
@@ -83,17 +84,21 @@ module.exports = {
 
         const initialMsg = await knex('sac_message').where('sac_sac_ticket', '=', income).orderBy('sacmen_id', 'asc');
         console.log('this is initial: ', initialMsg);
-        socket.emit("userMensage", initialMsg);
+        
+       
 
+        io.emit("userMensage", initialMsg, data);
+        //socket.emit("AdmMensage", initialMsg);
         }
     } catch (error) {
       console.log(error.message);
     }
   },
 
-  async messageTouser(socket, mensage, data){
+  async messageTouser(socket, mensage, data, io){
     try {
       console.log('this is men to user: ', mensage, data);
+      io.emit("userMensage", mensage, data);
     } catch (error) {
       console.log(error.message);
     }

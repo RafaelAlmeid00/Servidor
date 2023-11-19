@@ -16,6 +16,7 @@ module.exports = {
             res.status(400).send('deu ruim!');
         }
     },
+    
     async SearchMessage(req, res) {
         try {
             const { sac_sac_ticket: ticket } = req.body;
@@ -28,6 +29,7 @@ module.exports = {
             console.log(error);
         }
     },  
+
     async admSac (req, res){
         try {
             LastArr = [];
@@ -44,8 +46,8 @@ module.exports = {
             });
 
             Promise.all(takePromises).then(messageData => {
-                // Agora você tem os dados em `messageData` sem usar `await`
-                console.log(messageData);
+                
+                //console.log(messageData);
                 if (messageData) {
                     res.status(201).json({'lastMen': messageData, 'perfil': LastArr});
                 }
