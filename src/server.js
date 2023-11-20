@@ -41,21 +41,17 @@ const servidor = server.listen(3344, () => {
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 //Socket.io
-const origins = [
-  "https://easypass-app.onrender.com",
-  "http://localhost:5173",
-  "http://localhost:19006",
-  "http://localhost:5174",
-];
 
 const io = new Server(servidor, {
   cors: {
-    origin: (origin, next) => {
-      if (origins.includes(origin)) {
-        return next(null, true);
-      }
-      return next(new Error("Origin não permitida!"));
-    },
+    origin: [
+      "https://easypass-app.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:19006",
+      "http://localhost:5174",
+      "https://192.168.5.108:19006",
+      "exp://192.168.5.108:19000"
+    ],
     credentials: true,
     methods: ["GET", "POST"]
   },
@@ -76,33 +72,33 @@ io.use((socket, next) => {
     }
     next();
   });
-}); 
-  io.on('connection', async (socket) => {
-    console.log('Um cliente se conectou ao Socket.io');
-    
-    const token = socket.handshake.auth.token;
-    socket.on("userDetails", async (data) => {
-      console.log('fvjdfnjdfv', data);
-      controllersSocket.searchUserCPF(socket, data)
-    })
-    
-    socket.on("cardDetails", async (data) => {
-      console.log('this is data: ',data);
-      controllersSocket.searchCardAtivo(socket, data)
-    })
-    socket.on("userMensage", async (mensage, data, user) => {
-      console.log('olá, funfou', mensage, data);
-      if (user == 'client') {
-        controllersSocket.messageToadm(socket, mensage, data);
-      }else{
-        controllersSocket.messageTouser(socket, mensage, data);
-      }
-    })
-    //só falta fzr um emit aq pro client e o adm
-    socket.on("connect", (data) => {
-      console.log('olá, funfou');
-    });
-    socket.on("ping", (callback) => {
-      callback();
-    });
+});
+io.on('connection', async (socket) => {
+  console.log('Um cliente se conectou ao Socket.io');
+
+  const token = socket.handshake.auth.token;
+  socket.on("userDetails", async (data) => {
+    console.log('fvjdfnjdfv', data);
+    controllersSocket.searchUserCPF(socket, data)
+  })
+
+  socket.on("cardDetails", async (data) => {
+    console.log('this is data: ', data);
+    controllersSocket.searchCardAtivo(socket, data)
+  })
+  socket.on("userMensage", async (mensage, data, user) => {
+    console.log('olá, funfou', mensage, data);
+    if (user == 'client') {
+      controllersSocket.messageToadm(socket, mensage, data);
+    } else {
+      controllersSocket.messageTouser(socket, mensage, data);
+    }
+  })
+  //só falta fzr um emit aq pro client e o adm
+  socket.on("connect", (data) => {
+    console.log('olá, funfou');
   });
+  socket.on("ping", (callback) => {
+    callback();
+  });
+});
