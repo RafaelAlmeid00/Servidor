@@ -76,7 +76,7 @@ io.use((socket, next) => {
   });
 });
 io.on('connection', async (socket) => {
-  console.log('Um cliente se conectou ao Socket.io');
+  console.log(`O cliente: ${socket.id} se conectou ao Socket.io`);
 
   const token = socket.handshake.auth.token;
   socket.on("userDetails", async (data) => {
