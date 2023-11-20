@@ -51,8 +51,8 @@ const io = new Server(servidor, {
       "http://localhost:5174",
       "https://192.168.5.108:19006",
       "exp://192.168.5.108:19000",
-      'exp://192.168.5.108:8081',
-      'https://localhost:19006',
+      "exp://192.168.5.108:8081",
+      "https://localhost:19006"
     ],
     credentials: true,
     methods: ["GET", "POST"]
