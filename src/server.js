@@ -41,7 +41,10 @@ const servidor = server.listen(3344, () => {
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 //Socket.io
-const origins = [
+
+const io = new Server(servidor, {
+  cors: {
+    origin: [
       "https://easypass-app.onrender.com",
       "http://localhost:5173",
       "http://localhost:19006",
@@ -50,16 +53,7 @@ const origins = [
       "http://192.168.5.108:19000",
       "http://192.168.5.108:8081",
       "https://localhost:19006"
-];
-
-const io = new Server(servidor, {
-  cors: {
-    origin: (origin, next) => {
-      if (origins.includes(origin)) {
-        return next(null, true);
-      }
-      return next(new Error("Origin não permitida!"));
-    },
+    ],
     credentials: true,
     methods: ["GET", "POST"]
   },
