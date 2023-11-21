@@ -10,7 +10,7 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 const http = require('http');
-const server = http.createServer();
+const server = http.createServer(app);
 const { Server } = require('socket.io');
 const middleware = require('./controllers/Middleware');
 const uniqid = require('uniqid');
@@ -35,17 +35,21 @@ app.use(session({
 }));
 app.use(express.json());
 app.use(routes);
-const servidor = server.listen(3345, () => {
+const servidor = server.listen(3344, () => {
   console.log("Server is running on port 3344");
 });
 //Controller
 const controllersSocket = require('./controllers/socket/index');
 //Socket.io
 const origins = [
-  "https://easypass-app.onrender.com",
-  "http://localhost:5173",
-  "http://localhost:19006",
-  "http://localhost:5174",
+      "https://easypass-app.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:19006",
+      "http://localhost:5174",
+      "https://192.168.5.108:19006",
+      "http://192.168.5.108:19000",
+      "http://192.168.5.108:8081",
+      "https://localhost:19006"
 ];
 
 const io = new Server(servidor, {
@@ -112,4 +116,4 @@ io.use((socket, next) => {
     });
   });
 
-app.listen('3344')
+//app.listen('3344')
