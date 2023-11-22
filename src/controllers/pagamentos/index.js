@@ -115,8 +115,8 @@ module.exports = {
 
   async createPay(req, res) {
     const { pagamento } = req.body;
-    console.log(pagamento);
-    console.log(JSON.stringify(pagamento));
+    console.log('pag', pagamento);
+    console.log('pag', JSON.stringify(pagamento));
 
     pagamento.dataCriacao = new Date();
 
@@ -143,7 +143,10 @@ module.exports = {
         dataCriacao: new Date(payment.dateCreated)
       });
       console.log(listaPagamentos);
-      res.status(200).json({ message: 'Pagamento criado com sucesso', pagamento: payment });
+      if (payment) {
+        res.status(200).json({ message: 'Pagamento criado com sucesso', pagamento: payment });
+      }
+
     } catch (error) {
       console.error('Erro ao criar pagamento:', error);
       res.status(500).json({ message: 'Erro ao criar pagamento' });
