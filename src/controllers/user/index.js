@@ -637,7 +637,7 @@ module.exports = {
     </div>
     <p>Olá, ${nome}!</p>
     <p>Aqui está o seu link para alteração de email da sua conta EasyPass: CPF - ${formatarCPF(cpf)}</p>
-    <a class="button" href="http://localhost:5173/Sistema/AlterarEmail?token=${token}">Clique aqui</a>
+    <a class="button" href="http:/easypass-app.onrender.com/Sistema/AlterarEmail?token=${token}">Clique aqui</a>
   </div>
 </body>
 </html>
