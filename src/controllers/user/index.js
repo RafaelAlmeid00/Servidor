@@ -77,6 +77,15 @@ module.exports = {
     }
   },
 
+  async createTokenCel(req, res) {
+    const uniqueCode = generateUnique6DigitCode();
+    const timestamp = moment().unix();
+    codes.set(uniqueCode, timestamp);
+
+    return uniqueCode
+  },
+
+
   async searchUser(req, res) {
     try {
       console.log('aaaaaaaaaaaaaaaa');
@@ -189,7 +198,7 @@ module.exports = {
       if (takeCPF != undefined) {
 
         if (takeCPF.user_status == "cancelado") {
-          res.status(400).send('email ou senha inválido') 
+          res.status(400).send('email ou senha inválido')
         }
 
         bcrypt.compare(password, takeCPF.user_senha, function (err, comp) {
