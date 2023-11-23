@@ -95,7 +95,7 @@ module.exports = {
     }
   },
 
-  async getMSG(socket, data, io) {
+  async getMSG(socket, data) {
     try {
       console.log('this is dataa: ', data);
       const idgenerated = require('uniqid');
@@ -112,7 +112,7 @@ module.exports = {
         //sac já existe
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
         console.log("this is reload: ", reload);
-        io.emit("getMSG", reload);
+        socket.emit("getMSG", reload);
       }else{
         //iniciar sac
         await knex('sac').insert({
@@ -121,7 +121,8 @@ module.exports = {
 
         });
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
-        io.emit("getMSG", reload);
+        socket.emit("getMSG", reload);
+        
         }
     } catch (error) {
       console.log(error.message);
