@@ -90,6 +90,12 @@ io.use((socket, next) => {
      
       controllersSocket.searchCardAtivo(socket, data)
     })
+
+     
+    socket.on("getMSG", async (data) => {
+     
+      controllersSocket.getMSG(socket, data)
+    })
     
     socket.on("userMensage", async (mensage, data, user, Ticket) => {
       

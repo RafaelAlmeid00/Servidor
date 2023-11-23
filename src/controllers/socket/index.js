@@ -95,6 +95,39 @@ module.exports = {
     }
   },
 
+  async getMSG(socket, data, io) {
+    try {
+      console.log('this is dataa: ', data);
+      const idgenerated = require('uniqid');
+      
+      const income = idgenerated.time();
+      console.log('thi is income: ', income);
+
+      //tá naquele padrão doidão lá YYYY-MM-DD
+      var currentdate = new Date();
+      console.log('time: ', currentdate);
+      const [verify] = await knex('sac').where('user_user_CPF', '=', data);
+      console.log('this is verify: ', verify);
+      if (verify != undefined) {
+        //sac já existe
+        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+        console.log("this is reload: ", reload);
+        io.emit("getMSG", reload);
+      }else{
+        //iniciar sac
+        await knex('sac').insert({
+          sac_ticket: income,
+          user_user_CPF: data
+
+        });
+        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+        io.emit("getMSG", reload);
+        }
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+
   async messageTouser(mensage, data, io, Ticket){
     try {
         //sac já existe
