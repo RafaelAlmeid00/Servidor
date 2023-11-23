@@ -101,7 +101,7 @@ io.use((socket, next) => {
       
       if (user == 'client') {
         console.log('olá, client', mensage, data, query);
-        controllersSocket.messageToadm(socket, mensage, query, data, io);
+        controllersSocket.messageToadm(socket, mensage, data, query, io);
       }else{
         console.log('olá, adm', mensage, data);
         controllersSocket.messageTouser(mensage, data, io, Ticket);
