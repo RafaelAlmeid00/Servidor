@@ -32,7 +32,7 @@ module.exports = {
 
   async messageToadm(socket, mensage, data, query, io) {
     try {
-      console.log('this is dataa: ', data);
+      console.log('this is dataa: ',  mensage, data, query);
       const idgenerated = require('uniqid');
 
       const income = idgenerated.time();

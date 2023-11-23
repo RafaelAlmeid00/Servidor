@@ -100,7 +100,7 @@ io.use((socket, next) => {
     socket.on("userMensage", async (mensage, data, query, user, Ticket) => {
       
       if (user == 'client') {
-        console.log('olá, client', mensage, data);
+        console.log('olá, client', mensage, data, query);
         controllersSocket.messageToadm(socket, mensage, query, data, io);
       }else{
         console.log('olá, adm', mensage, data);
