@@ -97,11 +97,11 @@ io.use((socket, next) => {
       controllersSocket.getMSG(socket, data)
     })
     
-    socket.on("userMensage", async (mensage, data, user, Ticket) => {
+    socket.on("userMensage", async (mensage, data, query, user, Ticket) => {
       
       if (user == 'client') {
         console.log('olá, client', mensage, data);
-        controllersSocket.messageToadm(socket, mensage, data, io);
+        controllersSocket.messageToadm(socket, mensage, query, data, io);
       }else{
         console.log('olá, adm', mensage, data);
         controllersSocket.messageTouser(mensage, data, io, Ticket);
