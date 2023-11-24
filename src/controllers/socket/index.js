@@ -47,23 +47,23 @@ module.exports = {
         //sac já existe
         const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
 
+
         //console.log('this is idmen: ', idmen);
         //console.log('this is idmen: ', idmen);
 
-        console.log(idmen, 'MENSAGEM')
-        console.log(idmen, 'MENSAGEM')
-        console.log(idmen, 'MENSAGEM')
-        console.log(idmen, 'MENSAGEM')
+        console.log(idmen, idmen.length, 'MENSAGEM')
+        console.log(idmen, idmen.length, 'MENSAGEM')
+        console.log(idmen, idmen.length, 'MENSAGEM')
+        console.log(idmen, idmen.length, 'MENSAGEM')
 
-        if (idmen != undefined) {
-          var lastId = idmen.length - 1;
-          var NewId = idmen[lastId].sacmen_id + 1;
-        }
+        var lastId = idmen.length - 1;
+        var NewId = idmen[lastId].sacmen_id + 1;
+
         console.log(lastId, NewId, 'MENSAGEM')
-        console.log(lastId, NewId,'MENSAGEM')
-        console.log(lastId, NewId,'MENSAGEM')
-        console.log(lastId, NewId,'MENSAGEM')
-        console.log(lastId, NewId,'MENSAGEM')
+        console.log(lastId, NewId, 'MENSAGEM')
+        console.log(lastId, NewId, 'MENSAGEM')
+        console.log(lastId, NewId, 'MENSAGEM')
+        console.log(lastId, NewId, 'MENSAGEM')
 
 
 
@@ -75,7 +75,7 @@ module.exports = {
             user_user_CPF: verify.user_user_CPF,
             sac_data: currentdate,
             sacmen_texto: mensage,
-            sacmen_id: idmen && lastId && idmen.length > 0 ? NewId : 1
+            sacmen_id: NewId
           })
         }
 
@@ -91,6 +91,16 @@ module.exports = {
           user_user_CPF: data
 
         });
+        const [verify] = await knex('sac').where('user_user_CPF', '=', data);
+
+          await knex('sac_message').insert({
+            sac_sac_ticket: verify.sac_ticket,
+            user_user_CPF: verify.user_user_CPF,
+            sac_data: currentdate,
+            sacmen_texto: `Seja bem-vindo(a), seu protocolo de atendimento é: ${verify.sac_ticket}`,
+            sacmen_id: 1
+          })
+
 
         //console.log('this is sac_ticket', income);
         if (query == 'send') {
@@ -98,7 +108,7 @@ module.exports = {
             sac_sac_ticket: income,
             sac_data: currentdate,
             sacmen_texto: mensage,
-            sacmen_id: 1,
+            sacmen_id: 2,
             user_user_cpf: data
           });
         }
