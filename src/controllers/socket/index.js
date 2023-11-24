@@ -75,7 +75,7 @@ module.exports = {
 
           const reload1 = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
           console.log("this is reload: ", reload1);
-          io.emit("userMensage", reload1);
+          io.emit("userMensage", reload1, data);
 
         } else {
           var lastId = idmen.length - 1;
@@ -94,7 +94,7 @@ module.exports = {
 
           const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
           console.log("this is reload: ", reload);
-          io.emit("userMensage", reload);
+          io.emit("userMensage", reload, data);
         }
 
       } else {
