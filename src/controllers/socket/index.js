@@ -91,13 +91,13 @@ module.exports = {
           user_user_CPF: data
 
         });
-        const [verify] = await knex('sac').where('user_user_CPF', '=', data);
+        const [init] = await knex('sac').where('user_user_CPF', '=', data);
 
           await knex('sac_message').insert({
-            sac_sac_ticket: verify.sac_ticket,
-            user_user_CPF: verify.user_user_CPF,
+            sac_sac_ticket: init.sac_ticket,
+            user_user_CPF: init.user_user_CPF,
             sac_data: currentdate,
-            sacmen_texto: `Seja bem-vindo(a), seu protocolo de atendimento é: ${verify.sac_ticket}`,
+            sacmen_texto: `Seja bem-vindo(a), seu protocolo de atendimento é: ${init.sac_ticket}`,
             sacmen_id: 1
           })
 
