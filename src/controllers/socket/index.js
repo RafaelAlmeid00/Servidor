@@ -59,6 +59,11 @@ module.exports = {
           var lastId = idmen.length - 1;
           var NewId = idmen[lastId].sacmen_id + 1;
         }
+        console.log(lastId, NewId, 'MENSAGEM')
+        console.log(lastId, NewId,'MENSAGEM')
+        console.log(lastId, NewId,'MENSAGEM')
+        console.log(lastId, NewId,'MENSAGEM')
+        console.log(lastId, NewId,'MENSAGEM')
 
 
 
@@ -70,11 +75,8 @@ module.exports = {
             user_user_CPF: verify.user_user_CPF,
             sac_data: currentdate,
             sacmen_texto: mensage,
-            sacmen_id: idmen ? NewId : 1
+            sacmen_id: idmen && lastId && idmen.length > 0 ? NewId : 1
           })
-
-          console.log(idmen, 'MENSAGEM')
-
         }
 
 
