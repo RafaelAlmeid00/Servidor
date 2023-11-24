@@ -32,7 +32,7 @@ module.exports = {
 
   async messageToadm(socket, mensage, data, query, io) {
     try {
-      console.log('this is dataa: ',  mensage, data, query);
+      console.log('this is dataa: ', mensage, data, query);
       const idgenerated = require('uniqid');
 
       const income = idgenerated.time();
@@ -49,25 +49,54 @@ module.exports = {
 
         //console.log('this is idmen: ', idmen);
 
-        var lastId = idmen.length - 1;
-        const NewId = idmen[lastId].sacmen_id + 1;
-
-        //console.log('this is id and last: ', NewId, lastId);
-        //console.log('this is user_user_cpf: ', verify.user_user_CPF);
-        if (query == 'send') {
+        if (idmen.length == 0) {
           await knex('sac_message').insert({
             sac_sac_ticket: verify.sac_ticket,
             user_user_CPF: verify.user_user_CPF,
             sac_data: currentdate,
-            sacmen_texto: mensage,
-            sacmen_id: NewId
+            sacmen_texto: `Seja bem-vindo(a), seu protocolo de atendimento é: ${verify.sac_ticket}`,
+            sacmen_id: 1
           })
+          const firstmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+          
+          var ultimoid = firstmen.length - 1;
+          const novoID = firstmen[ultimoid].sacmen_id + 1;
+
+
+          if (query == 'send') {
+            await knex('sac_message').insert({
+              sac_sac_ticket: verify.sac_ticket,
+              user_user_CPF: verify.user_user_CPF,
+              sac_data: currentdate,
+              sacmen_texto: mensage,
+              sacmen_id: novoID
+            })
+          }
+
+          const reload1 = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+          console.log("this is reload: ", reload1);
+          io.emit("userMensage", reload1);
+
+        } else {
+          var lastId = idmen.length - 1;
+          const NewId = idmen[lastId].sacmen_id + 1;
+
+          if (query == 'send') {
+            await knex('sac_message').insert({
+              sac_sac_ticket: verify.sac_ticket,
+              user_user_CPF: verify.user_user_CPF,
+              sac_data: currentdate,
+              sacmen_texto: mensage,
+              sacmen_id: NewId
+            })
+          }
+
+
+          const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
+          console.log("this is reload: ", reload);
+          io.emit("userMensage", reload);
         }
 
-
-        const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
-        console.log("this is reload: ", reload);
-        io.emit("userMensage", reload);
       } else {
         //iniciar sac
         await knex('sac').insert({
