@@ -32,7 +32,7 @@ module.exports = {
 
   async messageToadm(socket, mensage, data, query, io) {
     try {
-      console.log('this is dataa: ',  mensage, data, query);
+      console.log('this is dataa: ', mensage, data, query);
       const idgenerated = require('uniqid');
 
       const income = idgenerated.time();
@@ -48,9 +48,19 @@ module.exports = {
         const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
 
         //console.log('this is idmen: ', idmen);
+        //console.log('this is idmen: ', idmen);
 
-        var lastId = idmen.length - 1;
-        const NewId = idmen[lastId].sacmen_id + 1;
+        console.log(idmen, 'MENSAGEM')
+        console.log(idmen, 'MENSAGEM')
+        console.log(idmen, 'MENSAGEM')
+        console.log(idmen, 'MENSAGEM')
+
+        if (idmen != undefined) {
+          var lastId = idmen.length - 1;
+          var NewId = idmen[lastId].sacmen_id + 1;
+        }
+
+
 
         //console.log('this is id and last: ', NewId, lastId);
         //console.log('this is user_user_cpf: ', verify.user_user_CPF);
@@ -60,9 +70,13 @@ module.exports = {
             user_user_CPF: verify.user_user_CPF,
             sac_data: currentdate,
             sacmen_texto: mensage,
-            sacmen_id: NewId
+            sacmen_id: idmen ? NewId : 1
           })
+
+          console.log(idmen, 'MENSAGEM')
+
         }
+
 
 
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
