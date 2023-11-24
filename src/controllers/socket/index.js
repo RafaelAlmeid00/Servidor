@@ -188,7 +188,7 @@ module.exports = {
       const reload = await knex('sac_message').where('sac_sac_ticket', '=', Ticket).orderBy('sacmen_id', 'asc');
       console.log("this is reload: ", reload);
       console.log('this is men to user: ', mensage, data, Ticket);
-      io.emit("userMensage", reload);
+      io.emit("userMensage", reload, 'admin');
 
     } catch (error) {
       console.log(error.message);
