@@ -105,7 +105,7 @@ module.exports = {
         //console.log('this is sac_ticket', income);
         if (query == 'send') {
           await knex('sac_message').insert({
-            sac_sac_ticket: income,
+            sac_sac_ticket: init.sac_ticket,
             sac_data: currentdate,
             sacmen_texto: mensage,
             sacmen_id: 2,
@@ -114,13 +114,9 @@ module.exports = {
         }
 
 
-        const initialMsg = await knex('sac_message').where('sac_sac_ticket', '=', income).orderBy('sacmen_id', 'asc');
-        console.log('this is initial: ', initialMsg);
+        const msgnew = await knex('sac_message').where('sac_sac_ticket', '=', init.sac_ticket).orderBy('sacmen_id', 'asc');
 
-
-
-        io.emit("userMensage", initialMsg, data);
-        //socket.emit("AdmMensage", initialMsg);
+        io.emit("userMensage", msgnew, data);
       }
     } catch (error) {
       console.log(error.message);
