@@ -32,7 +32,7 @@ module.exports = {
 
   async messageToadm(socket, mensage, data, query, io) {
     try {
-      console.log('this is dataa: ', mensage, data, query);
+      console.log('this is dataa: ',  mensage, data, query);
       const idgenerated = require('uniqid');
 
       const income = idgenerated.time();
@@ -47,25 +47,10 @@ module.exports = {
         //sac já existe
         const idmen = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
 
-
         //console.log('this is idmen: ', idmen);
-        //console.log('this is idmen: ', idmen);
-
-        console.log(idmen, idmen.length, 'MENSAGEM')
-        console.log(idmen, idmen.length, 'MENSAGEM')
-        console.log(idmen, idmen.length, 'MENSAGEM')
-        console.log(idmen, idmen.length, 'MENSAGEM')
 
         var lastId = idmen.length - 1;
-        var NewId = idmen[lastId].sacmen_id + 1;
-
-        console.log(lastId, NewId, 'MENSAGEM')
-        console.log(lastId, NewId, 'MENSAGEM')
-        console.log(lastId, NewId, 'MENSAGEM')
-        console.log(lastId, NewId, 'MENSAGEM')
-        console.log(lastId, NewId, 'MENSAGEM')
-
-
+        const NewId = idmen[lastId].sacmen_id + 1;
 
         //console.log('this is id and last: ', NewId, lastId);
         //console.log('this is user_user_cpf: ', verify.user_user_CPF);
@@ -80,7 +65,6 @@ module.exports = {
         }
 
 
-
         const reload = await knex('sac_message').where('sac_sac_ticket', '=', verify.sac_ticket).orderBy('sacmen_id', 'asc');
         console.log("this is reload: ", reload);
         io.emit("userMensage", reload);
@@ -91,32 +75,26 @@ module.exports = {
           user_user_CPF: data
 
         });
-        const [init] = await knex('sac').where('user_user_CPF', '=', data);
-
-          await knex('sac_message').insert({
-            sac_sac_ticket: init.sac_ticket,
-            user_user_CPF: init.user_user_CPF,
-            sac_data: currentdate,
-            sacmen_texto: `Seja bem-vindo(a), seu protocolo de atendimento é: ${init.sac_ticket}`,
-            sacmen_id: 1
-          })
-
 
         //console.log('this is sac_ticket', income);
         if (query == 'send') {
           await knex('sac_message').insert({
-            sac_sac_ticket: init.sac_ticket,
+            sac_sac_ticket: income,
             sac_data: currentdate,
             sacmen_texto: mensage,
-            sacmen_id: 2,
+            sacmen_id: 1,
             user_user_cpf: data
           });
         }
 
 
-        const msgnew = await knex('sac_message').where('sac_sac_ticket', '=', init.sac_ticket).orderBy('sacmen_id', 'asc');
+        const initialMsg = await knex('sac_message').where('sac_sac_ticket', '=', income).orderBy('sacmen_id', 'asc');
+        console.log('this is initial: ', initialMsg);
 
-        io.emit("userMensage", msgnew, data);
+
+
+        io.emit("userMensage", initialMsg, data);
+        //socket.emit("AdmMensage", initialMsg);
       }
     } catch (error) {
       console.log(error.message);
